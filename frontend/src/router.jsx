@@ -4,6 +4,8 @@ import App from "./App";
 import HomePage from './pages/HomePage'; 
 import LogInPage from './pages/LogInPage'; 
 import SignUpPage from './pages/SignUpPage';
+import PollPage from './pages/PollPage';
+import ProfilePage from './pages/ProfilePage';
 
 
 const router = createBrowserRouter([
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
             {
                 path: 'home/',
                 element: <HomePage/>
+            },
+            {
+                path: 'poll/',
+                element: <PollPage/>
+            },
+            {
+                path: 'profile/',
+                element: <ProfilePage/>
             },
         ]
     }
