@@ -12,7 +12,7 @@ const router = createBrowserRouter([
     {
         path: "/", 
         element: <App/>,
-        loader: getInfo,
+        // loader: getInfo,                //add this later when backend is connected to front end
         children:[
             {
                 index:true, 

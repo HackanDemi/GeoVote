@@ -1,4 +1,4 @@
-
+import LogInForm from "../components/LogInForm";
 
 const LogInPage = () => {
 
@@ -6,6 +6,7 @@ const LogInPage = () => {
   return (
     <>
       <h1>Login Page</h1>
+      <LogInForm/>
     </>
   )
 };
