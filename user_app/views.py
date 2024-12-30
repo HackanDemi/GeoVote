@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, logout
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import (
@@ -15,6 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import User
+from django.db import IntegrityError
 
 
 # TokenReq class to check if the user is authenticated
@@ -38,8 +38,10 @@ class SignUp(APIView):
             new_user = User.objects.create_user(**body_data)
             token = Token.objects.create(user=new_user)
             return Response({"user": new_user.email, "token": token.key})
-        except Exception:
-            return Response("Invalid user credentials", status=HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            return Response(f"Value error: {e}", status=HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            return Response(f"Integrity error: {e}", status=HTTP_400_BAD_REQUEST)
 
 
 class LogIn(APIView):
