@@ -1,8 +1,16 @@
 import requests
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_201_CREATED,
+    HTTP_200_OK,
+    HTTP_500_INTERNAL_SERVER_ERROR,
+)
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class CreatePollView(APIView):
@@ -15,7 +23,7 @@ class CreatePollView(APIView):
         if not question or len(options) < 2:
             return Response(
                 {"error": "A question and at least two options are required."},
-                status=HTTP_400_BAD_REQUEST,
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
         payload = {
             "question": question,
@@ -26,7 +34,6 @@ class CreatePollView(APIView):
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
             "Content-Type": "application/json",
-            # todo: put api key in .gitignore and put into settings
             "api-key": settings.POLLS_API_KEY,
         }
         try:
@@ -48,4 +55,50 @@ class CreatePollView(APIView):
                     "error": str(e),
                 },
                 status=HTTP_400_BAD_REQUEST,
+            )
+
+
+class AllPollsView(APIView):
+    def get(self, request):
+        try:
+            offset = int(request.query_params.get("offset", 0))
+            limit = int(request.query_params.get("limit", 25))
+        except ValueError:
+            return Response(
+                {"error": "Invalid 'offset' or 'limit' value."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        api_url = f"https://api.pollsapi.com/v1/get/polls?offset={offset}&limit={limit}"
+        headers = {
+            "api-key": settings.POLLS_API_KEY,
+        }
+
+        try:
+            response = requests.get(api_url, headers=headers)
+            if response.status_code == 200:
+                try:
+                    return Response(response.json(), status=HTTP_200_OK)
+                except ValueError:
+                    return Response(
+                        {"error": "Invalid response from Polls API."},
+                        status=HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
+            else:
+                try:
+                    error_details = response.json()
+                except ValueError:
+                    error_details = {"error": "Invalid response from Polls API."}
+                return Response(
+                    {
+                        "error": "Failed to fetch polls.",
+                        "details": error_details,
+                    },
+                    status=response.status_code,
+                )
+        except requests.exceptions.RequestException as e:
+            logger.error("Polls API request failed: %s", e)
+            return Response(
+                {"error": "An error occured connecting to Polls API."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
