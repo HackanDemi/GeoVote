@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ReactImg from '../assets/croccat.png';
-import LogoImg from '../assets/GeoVote.png'; // 
+import LogoImg from '../assets/GeoVote.png';
 
 const pages = ['Home', 'Map', 'Poll'];
 const settings = ['Profile', 'Account', 'Logout'];
