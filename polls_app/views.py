@@ -102,3 +102,50 @@ class AllPollsView(APIView):
                 {"error": "An error occured connecting to Polls API."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+# 67731a341cc54200101734eb test poll_id
+class GetAllVotes(APIView):
+    def get(self, request):
+        try:
+            poll_id = request.query_params.get("poll_id")
+            offset = int(request.query_params.get("offset", 0))
+            limit = min(request.query_params.get("limit", 25))
+        except ValueError:
+            return Response(
+                {"error": "Invalid 'offset' or 'limit' value."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        api_url = f"https://api.pollsapi.com/v1/get/votes/{poll_id}?offset={offset}&limit={limit}"
+        headers = {
+            "api-key": settings.POLLS_API_KEY,
+        }
+
+        try:
+            response = requests.get(api_url, headers=headers)
+            if response.status_code == 200:
+                try:
+                    return Response(response.json(), status=HTTP_200_OK)
+                except ValueError:
+                    return Response(
+                        {"error": "Invalid response from Polls API."},
+                        status=HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
+            else:
+                try:
+                    error_details = response.json()
+                except ValueError:
+                    error_details = {"error": "Invalid response from Polls API."}
+                return Response(
+                    {
+                        "error": "Failed to fetch polls.",
+                        "details": error_details,
+                    },
+                    status=response.status_code,
+                )
+        except requests.exceptions.RequestException as e:
+            return Response(
+                {"error": "An error occured connecting to Polls API."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
+            )
