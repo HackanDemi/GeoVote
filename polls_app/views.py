@@ -7,6 +7,7 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_200_OK,
     HTTP_500_INTERNAL_SERVER_ERROR,
+    HTTP_404_NOT_FOUND,
 )
 from django.conf import settings
 
@@ -148,4 +149,46 @@ class GetAllVotes(APIView):
             return Response(
                 {"error": "An error occured connecting to Polls API."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class DeletePoll(APIView):
+    def delete(self, request):
+        poll_id = request.data.get("poll_id")
+
+        if not poll_id:
+            return Response(
+                {"error": "Poll ID is required."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        api_url = f"https://api.pollsapi.com/v1/remove/poll/"
+        headers = {
+            "Content-Type": "application/json",
+            "api-key": settings.POLLS_API_KEY,
+        }
+        payload = {
+            "poll_id": poll_id,
+        }
+        try:
+            response = requests.post(api_url, json=payload, headers=headers)
+
+            if response.status_code == 200:
+                return Response(
+                    {"message": "Poll deleted successfully."}, status=HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        "error": "Failed to delete poll.",
+                        "details": response.json(),
+                    },
+                    status=response.status_code,
+                )
+        except requests.exceptions.RequestException as e:
+            return Response(
+                {
+                    "error": str(e),
+                },
+                status=HTTP_400_BAD_REQUEST,
             )
