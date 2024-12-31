@@ -1,4 +1,5 @@
 import React from 'react'
+// Need SDK JS library
 
 export default function MapTiler() {
     // hook
