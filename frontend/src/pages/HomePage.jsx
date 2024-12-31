@@ -1,13 +1,11 @@
+import React from 'react'
+import NavBar from '../components/NavBar'
 
-
-const HomePage = () => {
-
-
-    return (
-      <>
-        <h1>Home Page</h1>
-      </>
-    )
-  };
-  
-  export default HomePage;
+export default function HomePage() {
+  return (
+    <>
+    <NavBar />
+    <div>HomePage</div>
+    </>
+  )
+}
