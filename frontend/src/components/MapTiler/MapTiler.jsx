@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import maptiler from '@maptiler/sdk'; // The MapTiler SDK is used to create and display the map inside the div with the mapContainerRef reference
+import maptiler from '@maptiler/sdk';
 import axios from 'axios';
+import './MapTiler.css';
 
 export default function MapTiler() {
-    const mapContainerRef = useRef(null); // A ref is created using useRef to reference the map container
+    const mapContainerRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,8 +25,8 @@ export default function MapTiler() {
     }, []);
 
     return (
-        <div>
-            <div ref={mapContainerRef} style={{ width: '100%', height: '500px' }}></div>
+        <div className="map-container">
+            <div ref={mapContainerRef} className="map"></div>
         </div>
     );
 }
