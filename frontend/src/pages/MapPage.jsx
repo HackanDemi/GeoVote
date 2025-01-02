@@ -6,7 +6,7 @@ export default function MapPage() {
   return (
     <>
     <NavBar />
-    <div>MapPage</div>
+    <div>Map Key: </div>
     <MapTiler />
     </>
   )

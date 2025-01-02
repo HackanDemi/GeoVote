@@ -6,8 +6,8 @@ import LogInPage from './pages/LogInPage';
 import SignUpPage from './pages/SignUpPage';
 import PollPage from './pages/PollPage';
 import ProfilePage from './pages/ProfilePage';
-// import MapPage from './pages/MapPage';
-// import ErrorPage from './pages/ErrorPage';
+import MapPage from './pages/MapPage';
+import ErrorPage from './pages/ErrorPage';
 
 
 const router = createBrowserRouter([
@@ -44,14 +44,14 @@ const router = createBrowserRouter([
                 path: 'profile/',
                 element: <ProfilePage/>
             },
-            // {
-            //     path: 'map/',
-            //     element: <MapPage/>
-            // },
-            // {
-            //     path: '*',
-            //     element: <ErrorPage/>
-            // },
+            {
+                path: 'map/',
+                element: <MapPage/>
+            },
+            {
+                path: '*',
+                element: <ErrorPage/>
+            },
         ]
     }
 ]);
