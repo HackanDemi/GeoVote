@@ -10,6 +10,8 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
 )
 from django.conf import settings
+from .models import Question, Choice
+from .serializer import PollSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,9 @@ class CreatePollView(APIView):
         identifier = request.data.get("identifier")
         data = request.data.get("data")
         options = request.data.get("options", [])
+        city_id = request.data.get("city_id")
+        state_id = request.data.get("state_id")
+        publication_date = request.data.get("publication_date")
 
         if not question or len(options) < 2:
             return Response(
@@ -31,6 +36,9 @@ class CreatePollView(APIView):
             "identifier": identifier,
             "data": data,
             "options": options,
+            "city_id": city_id,
+            "state_id": state_id,
+            "publication_date": publication_date,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
@@ -41,6 +49,14 @@ class CreatePollView(APIView):
             response = requests.post(api_url, json=payload, headers=headers)
 
             if response.status_code == 201:
+                question = Question.objects.create(
+                    question_text=question,
+                    publication_date=publication_date,
+                    city_id=city_id,
+                    state_id=state_id,
+                )
+                for option in options:
+                    Choice.objects.create(question=question, choice_test=option)
                 return Response(response.json(), status=HTTP_201_CREATED)
             else:
                 return Response(
