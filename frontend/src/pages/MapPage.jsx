@@ -1,13 +1,13 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
-import MapTiler from '../components/MapTiler'
+import MapTiler from '../components/MapTiler/MapTiler'
 
 export default function MapPage() {
   return (
     <>
     <NavBar />
+    <div>Map Key: </div>
     <MapTiler />
-    <div>MapPage</div>
     </>
   )
 }

@@ -1,12 +1,14 @@
-
+import React from 'react'
+import NavBar from '../components/NavBar'
 
 const ProfilePage = () => {
 
 
     return (
       <>
-        <h1>Profile Page</h1>
-      </>
+    <NavBar />
+    <div>ProfilePage</div>
+    </>
     )
   };
   

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,10 +13,18 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ReactImg from '../assets/croccat.png';
-import LogoImg from '../assets/GeoVote.png'; // 
+import LogoImg from '../assets/GeoVote.png';
 
-const pages = ['Home', 'Map', 'Poll'];
-const settings = ['Profile', 'Account', 'Logout'];
+const pages = [
+  { name: 'Home', path: '/home' },
+  { name: 'Map', path: '/map' },
+  { name: 'Poll', path: '/poll' },
+];
+const settings = [
+  { name: 'Profile', path: '/profile' },
+  { name: 'Account', path: '/account' },
+  { name: 'Logout', path: '/logout' },
+];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -87,8 +96,12 @@ function ResponsiveAppBar() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>{page}</Typography>
+                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
+                    <Link to={page.path} style={{ textDecoration: 'none', color: '#7100AE' }}>
+                      {page.name}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -114,11 +127,13 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: '#FFFFFF', display: 'block' }}
+                component={Link}
+                to={page.path}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
@@ -145,8 +160,12 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>{setting}</Typography>
+                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
+                    <Link to={setting.path} style={{ textDecoration: 'none', color: '#7100AE' }}>
+                      {setting.name}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
