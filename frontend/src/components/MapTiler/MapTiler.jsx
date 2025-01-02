@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { useRef, useEffect } from "react";
-=======
-
->>>>>>> a4f272b (Fix some routes and component imports)
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./MapTiler.css";

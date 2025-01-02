@@ -23,11 +23,7 @@ const pages = [
 const settings = [
   { name: 'Profile', path: '/profile' },
   { name: 'Account', path: '/account' },
-<<<<<<< HEAD
   { name: 'Logout', path: '/login' },
-=======
-
->>>>>>> a4f272b (Fix some routes and component imports)
 ];
 
 function NavBar() {
