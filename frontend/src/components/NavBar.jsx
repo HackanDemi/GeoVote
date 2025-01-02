@@ -23,10 +23,10 @@ const pages = [
 const settings = [
   { name: 'Profile', path: '/profile' },
   { name: 'Account', path: '/account' },
-  { name: 'Logout', path: '/logout' },
+  { name: 'Logout', path: '/login' },
 ];
 
-function ResponsiveAppBar() {
+function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -175,4 +175,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default NavBar;
