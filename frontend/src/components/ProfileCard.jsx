@@ -28,6 +28,14 @@ const ProfileCard = () => {
             (user age)
           </Typography>
 
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            (user address)
+          </Typography>
+
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            (user bio)
+          </Typography>
+
         </CardContent>
         <CardActions>
           <Button size="small">Edit</Button>

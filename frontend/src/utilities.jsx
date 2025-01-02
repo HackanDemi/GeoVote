@@ -71,25 +71,73 @@ export const logOut = async(user) => {
 };
 
 
+// export const userUpdate = async(user) => {
+//   try{
+
+//   }
+// }
+
+
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 export const createPoll = async(pollData) =>  {
-  try { 
     const token = localStorage.getItem('token'); 
-    
-    const response = await api.post('polls/', pollData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
-    });
 
-    if (response.status === 201) {
-      const poll = response.data; 
-      return poll;
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      const response = await api.post('polls/', pollData);
+      
+      if (response.status === 201) {
+        const poll = response.data; 
+        return poll;
+
+      } else  {
+        console.error('Poll creation error:');
+        return null;
+      }
     }
-  } catch (err) {
-    console.error('Poll creation error:', err.message);
-    return null;
+};
+
+
+
+export const getPolls = async() => {
+  const token = localStorage.getItem('token')
+
+  if(token){
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      let response = await api.get('polls/');
+
+      if (response.status === 200){
+          return response.data;
+      }
+  } else {
+      return null;
   }
 };
+
+
+export const updatePoll = async (formData) => {
+  const { pollId } = formData
+  try{
+      const { data } = await api.put(`poll/${pollId}/`);
+      return data;
+
+  }catch (error){
+      console.error('Error updating poll name: ', error.message);
+  }
+};
+
+
+export const deletePoll = async(pollId) =>{
+  try {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        api.defaults.headers.common['Authorization'] = `Token ${token}`;
+        const { data } = await api.delete(`poll/${pollId}/`);
+        return data;
+      }
+    } catch (err) {
+      console.error('Error deleting poll:', err.message);
+    }
+}
