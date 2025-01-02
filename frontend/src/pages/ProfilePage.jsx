@@ -1,5 +1,7 @@
-import React from 'react'
+
 import NavBar from '../components/NavBar'
+import PollCard from '../components/PollsCard';
+import ProfileCard from '../components/ProfileCard';
 
 const ProfilePage = () => {
 
@@ -7,7 +9,14 @@ const ProfilePage = () => {
     return (
       <>
     <NavBar />
-    <div>ProfilePage</div>
+    <div className='profile-card'>
+      <ProfileCard/>
+    </div>
+
+    <div className='poll-cards'>
+      <PollCard/>
+    </div>
+    
     </>
     )
   };
