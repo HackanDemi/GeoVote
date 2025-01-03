@@ -23,11 +23,14 @@
     text-align: center;
 }
 
+
 .login-form h1 {
     margin-bottom: 20px;
     font-size: 50px;
+    color: white;
 }
   
+
 .login-form form input {
     display: block;
     width: 100%;
@@ -38,6 +41,7 @@
     background: #363a47;
     color: white;
 }
+
 
 .login-form button {
     width: 100%;
@@ -51,11 +55,12 @@
     margin-top: 10px;
   }
 
+
 .login-form button:hover {
     background: #611792;
 }
 
-  /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 .signup-form { 
     display: flex;
@@ -71,6 +76,18 @@
     max-width: 80%;
     margin-top: 5%;
     text-align: center;
+}
+
+.signup-form .MuiInputBase-input {
+    color: white;
+}
+
+.signup-form .MuiInputLabel-root {
+    color: white; 
+}
+
+.signup-form .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: #0f1627f5;
 }
 
 .signup-form h1 {

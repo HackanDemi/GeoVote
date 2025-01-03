@@ -33,14 +33,6 @@ const SignUpForm = () => {
           <TextField 
             required
             id='outline-required'
-            label='Display Name'/>
-          <TextField 
-            required
-            id='outline-required'
-            label='Age'/>
-          <TextField 
-            required
-            id='outline-required'
             label='Email'/>
           <TextField 
             required
