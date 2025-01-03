@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Container } from '@mui/material';
 import TextField from '@mui/material/TextField';
-
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
@@ -53,7 +52,7 @@ const SignUpForm = () => {
             </Button>
         </Box>
         <div className='signup-back-button'>
-          <Button as={Link} to='/login/'>Back to Log In</Button>
+          <Button component={Link} to='/login/'>Back to Log In</Button>
         </div>
         
       </Container>

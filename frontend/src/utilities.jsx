@@ -7,14 +7,11 @@ export const api = axios.create({
 // --------------------------------------------------------- USERS ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 export const userRegistrtion = async(formData) => {
-  const { first_name, last_name, display_name, age, email, password, registration } = formData; 
-  let response = await api.post(
-    `users/${registration}`, 
+  const { first_name, last_name, email, password } = formData; 
+  let response = await api.post('users/signup/', 
     { 
       first_name: first_name,
       last_name: last_name, 
-      display_name,
-      age: age, 
       email: email, 
       password: password,
     }
