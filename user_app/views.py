@@ -28,16 +28,28 @@ class SignUp(APIView):
 
     # Creating a new user with the given data
     def post(self, request):
+        required_fields = ["email", "password", "first_name", "last_name"]
         body_data = request.data.copy()
+        
+        for field in required_fields:
+            if field not in body_data:
+                return Response(f"Missing field: {field}", status=HTTP_400_BAD_REQUEST)
+
         # Setting the username as the email
         body_data["username"] = body_data["email"]
 
         # Creating a new user with the given data
         try:
             # Creating a new user and a token for the user
-            new_user = User.objects.create_user(**body_data)
+            new_user = User.objects.create_user(
+                username=body_data["username"],
+                email=body_data["email"],
+                password=body_data["password"],
+                first_name=body_data["first_name"],
+                last_name=body_data["last_name"],
+            )
             token = Token.objects.create(user=new_user)
-            return Response({"user": new_user.email, "token": token.key})
+            return Response({"user": new_user.email, "token": token.key, "first_name": new_user.first_name, "last_name": new_user.last_name}, status=HTTP_201_CREATED)
         except ValueError as e:
             return Response(f"Value error: {e}", status=HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
