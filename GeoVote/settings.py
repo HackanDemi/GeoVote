@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-iyien+=_!=f3)9+xy_ge9xpsxnh@hg5_a(*8q%=)#_wdqf2rhq"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "user_app",
     "region_app",
     "chatbot_app",
+    "profile_app",
     "corsheaders",
 ]
 
