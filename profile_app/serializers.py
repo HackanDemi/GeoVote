@@ -2,6 +2,7 @@ from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from .models import Profile, Address
 
 class ProfileSerializer(ModelSerializer):
+    address = ReadOnlyField(source='address.__str__')
     
     class Meta:
         model = Profile

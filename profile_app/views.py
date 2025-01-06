@@ -47,9 +47,10 @@ class ProfileView(APIView):
         address_serializer = AddressSerializer(data=address_data)
     
         if profile_serializer.is_valid() and address_serializer.is_valid():
-            profile_serializer.save(user=request.user)
-            address_validated_data = address_serializer.validated_data
-            Address.objects.create(user=request.user, **address_validated_data)
+            
+            address_instance = address_serializer.save(user=request.user)
+            profile_instance = profile_serializer.save(user=request.user, address=address_instance)
+            
             return Response({
                 "profile": profile_serializer.data,
                 "address": AddressSerializer(Address.objects.get(user=request.user)).data
