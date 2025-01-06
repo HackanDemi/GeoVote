@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/v1/polls/", include("polls_app.urls")),
     path("api/v1/region/", include("region_app.urls")),
     path("api/v1/users/", include("user_app.urls")),
+    path("api/v1/chatbot/", include("chatbot_app.urls")),
 ]

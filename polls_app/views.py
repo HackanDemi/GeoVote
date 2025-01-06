@@ -36,9 +36,9 @@ class CreatePollView(APIView):
             "identifier": identifier,
             "data": data,
             "options": options,
-            "city_id": city_id,
-            "state_id": state_id,
-            "publication_date": publication_date,
+            # "city_id": city_id,
+            # "state_id": state_id,
+            # "publication_date": publication_date,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
@@ -47,7 +47,6 @@ class CreatePollView(APIView):
         }
         try:
             response = requests.post(api_url, json=payload, headers=headers)
-
             if response.status_code == 201:
                 question = Question.objects.create(
                     question_text=question,
