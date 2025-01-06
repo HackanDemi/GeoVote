@@ -24,11 +24,15 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
     
-    def get(self, request):
+    def get(self, request, pk=None):
         print(f"Authenticated user: {request.user}")
         try:
-            profile = Profile.objects.get(user=request.user)
-            address = Address.objects.get(user=request.user)
+            if pk:
+                profile = Profile.objects.get(pk=pk, user=request.user)
+                address = Address.objects.get(pk=profile.address.pk, user=request.user)
+            else:
+                profile = Profile.objects.get(user=request.user)
+                address = Address.objects.get(user=request.user)
             profile_serializer = ProfileSerializer(profile)
             address_serializer = AddressSerializer(address)
             return Response({
@@ -58,6 +62,43 @@ class ProfileView(APIView):
     
         profile_errors = profile_serializer.errors if not profile_serializer.is_valid() else {}
         address_errors = address_serializer.errors if not address_serializer.is_valid() else {}
+    
+        return Response({
+            "profile_errors": profile_errors,
+            "address_errors": address_errors
+        }, status=HTTP_400_BAD_REQUEST)
+        
+    
+    def put(self, request, pk=None):
+        print(f"Authenticated user: {request.user}")  # Debug statement
+        try:
+            profile = Profile.objects.get(pk=pk, user=request.user)
+            address = Address.objects.get(pk=profile.address.pk, user=request.user)
+        except Profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
+    
+        profile_data = request.data.get("profile")
+        address_data = request.data.get("address")
+    
+        profile_serializer = ProfileSerializer(profile, data=profile_data, partial=True)
+        address_serializer = AddressSerializer(address, data=address_data, partial=True) if address_data else None
+    
+        if profile_serializer.is_valid() and (address_serializer is None or address_serializer.is_valid()):
+            profile_serializer.save()
+            if address_serializer:
+                address_serializer.save()
+            return Response({
+                "profile": ProfileSerializer(profile).data,  # Ensure profile is serialized with updated address
+                "address": AddressSerializer(address).data
+            }, status=HTTP_200_OK)
+    
+        # Debug statements to log errors
+        print(f"Profile errors: {profile_serializer.errors}")
+        if address_serializer:
+            print(f"Address errors: {address_serializer.errors}")
+    
+        profile_errors = profile_serializer.errors if not profile_serializer.is_valid() else {}
+        address_errors = address_serializer.errors if address_serializer and not address_serializer.is_valid() else {}
     
         return Response({
             "profile_errors": profile_errors,
