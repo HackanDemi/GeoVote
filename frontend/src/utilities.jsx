@@ -68,11 +68,20 @@ export const logOut = async(user) => {
 };
 
 
-// export const userUpdate = async(user) => {
-//   try{
+export const getInfo = async() => {
+  let token = localStorage.getItem('token');
 
-//   }
-// }
+  api.defaults.headers.common['Authorization'] = `Token ${token}`
+
+  try {
+    let response = await api.get('users/info');
+    if (response.status === 200) {
+      return response.data;
+    } return null;
+  } catch (err) {
+    console.error('Error getting user info:', err);
+  }
+}
 
 
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------

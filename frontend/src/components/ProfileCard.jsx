@@ -1,6 +1,6 @@
 import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid2, MenuItem } from '@mui/material';
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import { getInfo } from '../utilities';
 
 
 
@@ -8,6 +8,7 @@ const ProfileCard = () => {
   const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', street:'', city:'', state:'', zip_code:'', birth_date:'', bio:''}); 
   const [user, setUser] = useState({});
   const [edit, setEdit] = useState(false); 
+  const [firstFormData, setFirstFormData] = useState(...formData);
 
   const states = [
     { name: 'Alabama', abbreviation: 'AL' },
@@ -78,12 +79,28 @@ const ProfileCard = () => {
   };
 
   const handleSave = () => {
-    const location = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zip_code}`;
-    const updatedUser = {...formData, location};
+    const address = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zip_code}`;
+    const updatedUser = {...formData, address};
     console.log('Updated user profile:', updatedUser);
-    setFormData({...updatedUser});
+    setFirstFormData({...formData});
     toggleEdit();
   };
+
+  const handleCancel = () => {
+    setFormData({...firstFormData});
+    toggleEdit();
+  }
+
+  useEffect(() => {
+    const getUserData = async() => {
+      const userInfo = await getInfo();
+      console.log(userInfo);
+      if (userInfo) {
+        setUser(userInfo);
+      }
+    };
+    getUserData();
+  })
 
 
 
@@ -153,8 +170,8 @@ const ProfileCard = () => {
                   onChange={handleStateChange}
                   select
                   sx={{ width: '200px' }}
-                  margin="normal"
-                >
+                  margin="normal">
+
                   {states.map((state) => (
                     <MenuItem key={state.abbreviation} value={state.abbreviation}>
                       {state.name}
@@ -195,7 +212,7 @@ const ProfileCard = () => {
                 {formData.birth_date}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {formData.location}
+                {formData.address}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {formData.bio}
@@ -205,15 +222,19 @@ const ProfileCard = () => {
         </CardContent>
         <CardActions>
           {edit ? (
-            <Button size="small" onClick={handleSave}>
-              Save
-            </Button>
-          ) : (
-            <Button size="small" onClick={toggleEdit}>
-              Edit
-            </Button>
+            <>
+              <Button size="small" onClick={handleSave}>
+                Save
+              </Button>
+              <Button size="small" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </>
+            ) : (
+              <Button size="small" onClick={toggleEdit}>
+                Edit
+              </Button>
           )}
-          
         </CardActions>
       </Card>
     </Container>

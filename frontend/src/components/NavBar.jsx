@@ -1,19 +1,10 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
+import * as Mui from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import ReactImg from '../assets/croccat.png';
 import LogoImg from '../assets/GeoVote.png';
+import { logOut } from '../utilities';
 
 const pages = [
   { name: 'Home', path: '/home' },
@@ -28,6 +19,7 @@ const settings = [
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -44,12 +36,22 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
+  const handleLogOut = async() => {
+    try {
+      await logOut();
+      navigate('/login')
+      console.log('User successfully logged out')
+    } catch(err) {
+      console.error('Logout failed:', err);
+    }
+  };
+
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#7100AE' }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
+    <Mui.AppBar position="static" sx={{ backgroundColor: '#7100AE' }}>
+      <Mui.Container maxWidth="xl">
+        <Mui.Toolbar disableGutters>
           <img src={LogoImg} alt="Logo" style={{ display: { xs: 'none', md: 'flex' }, marginRight: '8px', height: '40px' }} />
-          <Typography
+          <Mui.Typography
             variant="h6"
             noWrap
             component="a"
@@ -62,23 +64,22 @@ function NavBar() {
               letterSpacing: '.3rem',
               color: '#FFFFFF',
               textDecoration: 'none',
-            }}
-          >
+            }}>
             GEOVOTE
-          </Typography>
+          </Mui.Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
+          <Mui.Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <Mui.IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              sx={{ color: '#FFFFFF' }}
-            >
+              sx={{ color: '#FFFFFF' }}>
+
               <MenuIcon />
-            </IconButton>
-            <Menu
+            </Mui.IconButton>
+            <Mui.Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
@@ -92,20 +93,20 @@ function NavBar() {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
-            >
+              sx={{ display: { xs: 'block', md: 'none' } }}>
+
               {pages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
+                <Mui.MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Mui.Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
                     <Link to={page.path} style={{ textDecoration: 'none', color: '#7100AE' }}>
                       {page.name}
                     </Link>
-                  </Typography>
-                </MenuItem>
+                  </Mui.Typography>
+                </Mui.MenuItem>
               ))}
-            </Menu>
-          </Box>
-          <Typography
+            </Mui.Menu>
+          </Mui.Box>
+          <Mui.Typography
             variant="h5"
             noWrap
             component="a"
@@ -122,10 +123,10 @@ function NavBar() {
             }}
           >
             GEOVOTE
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          </Mui.Typography>
+          <Mui.Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
+              <Mui.Button
                 key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: '#FFFFFF', display: 'block' }}
@@ -133,16 +134,16 @@ function NavBar() {
                 to={page.path}
               >
                 {page.name}
-              </Button>
+              </Mui.Button>
             ))}
-          </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Mr. Geo Vote" src={ReactImg} />
-              </IconButton>
-            </Tooltip>
-            <Menu
+          </Mui.Box>
+          <Mui.Box sx={{ flexGrow: 0 }}>
+            <Mui.Tooltip title="Open settings">
+              <Mui.IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Mui.Avatar alt="Mr. Geo Vote" src={ReactImg} />
+              </Mui.IconButton>
+            </Mui.Tooltip>
+            <Mui.Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
@@ -159,19 +160,19 @@ function NavBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
+                <Mui.MenuItem key={setting.name} onClick={setting.name === 'Logout' ? handleLogOut : handleCloseUserMenu}>
+                  <Mui.Typography sx={{ textAlign: 'center', color: '#7100AE' }}>
                     <Link to={setting.path} style={{ textDecoration: 'none', color: '#7100AE' }}>
                       {setting.name}
                     </Link>
-                  </Typography>
-                </MenuItem>
+                  </Mui.Typography>
+                </Mui.MenuItem>
               ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+            </Mui.Menu>
+          </Mui.Box>
+        </Mui.Toolbar>
+      </Mui.Container>
+    </Mui.AppBar>
   );
 }
 export default NavBar;

@@ -2,17 +2,39 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Container } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import { useState } from 'react';
+import { userRegistrtion } from '../utilities';
 
 
 
 const SignUpForm = () => {
+  const { setUser } = useOutletContext();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSignUpClick = () => {
-    navigate('/home');
-  }
+  const handleSubmit = async(evt) => {
+    evt.preventDefault();
+    const formData = {
+      first_name: firstName, 
+      last_name: lastName, 
+      email: email, 
+      password: password,
+    };
+
+    const user = await userRegistrtion(formData); 
+    console.log(user); 
+    if (user) {
+      setUser(user); 
+      localStorage.setItem('user', JSON.stringify(user)); 
+      navigate('/home', { state: {user: user}});
+    } else { 
+      console.error('User registration failed.');
+    };
+  };
 
 
   return (
@@ -20,23 +42,36 @@ const SignUpForm = () => {
       <Container className='signup-form'>
       <h1>Sign Up</h1>
         <Box component='form'
+          onSubmit={handleSubmit}
           sx={{ width: '25ch' }}>
           <TextField 
             required
-            id='outline-required'
-            label='First Name'/>
+            id='first_name'
+            label='First Name'
+            type='name'
+            value={firstName}
+            onChange={(evt) => setFirstName(evt.target.value)}/>
           <TextField 
             required
-            id='outline-required'
-            label='Last Name'/>
+            id='last_name'
+            label='Last Name'
+            type='name'
+            value={lastName}
+            onChange={(evt) => setLastName(evt.target.value)}/>
           <TextField 
             required
-            id='outline-required'
-            label='Email'/>
+            id='email'
+            label='Email'
+            type='email'
+            value={email}
+            onChange={(evt) => setEmail(evt.target.value)}/>
           <TextField 
             required
-            id='outline-required'
-            label='Password'/>
+            id='password'
+            label='Password'
+            type='password'
+            value={password}
+            onChange={(evt) => setPassword(evt.target.value)}/>
           </Box>
           <br></br>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -46,8 +81,7 @@ const SignUpForm = () => {
                 Sign up with Google
           </Button>
           <Button 
-            variant='outlined'
-            onClick={handleSignUpClick}>
+            variant='outlined' type='submit'>
               Sign Up
             </Button>
         </Box>
