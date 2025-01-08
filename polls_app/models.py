@@ -7,6 +7,8 @@ class Question(models.Model):
     publication_date = models.DateTimeField("date published")
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
 
 class Choice(models.Model):

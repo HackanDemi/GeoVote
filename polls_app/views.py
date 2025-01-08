@@ -12,6 +12,8 @@ from rest_framework.status import (
 from django.conf import settings
 from .models import Question, Choice
 from .serializer import PollSerializer
+from geopy.geocoders import Nominatim
+from profile_app.models import Address  # Imports the address class
 
 logger = logging.getLogger(__name__)
 
@@ -25,20 +27,48 @@ class CreatePollView(APIView):
         city_id = request.data.get("city_id")
         state_id = request.data.get("state_id")
         publication_date = request.data.get("publication_date")
+        address_id = request.data.get("address_id")
 
         if not question or len(options) < 2:
             return Response(
                 {"error": "A question and at least two options are required."},
-                status=HTTP_500_INTERNAL_SERVER_ERROR,
+                status=HTTP_400_BAD_REQUEST,
             )
+
+        if not address_id:
+            return Response(
+                {"error": "Address ID is required."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        # Get the address from the Address model
+        try:
+            address_obj = Address.objects.get(id=address_id)
+        except Address.DoesNotExist:
+            return Response(
+                {"error": "Address not found."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        full_address = f"{address_obj.street}, {address_obj.city}, {address_obj.state} {address_obj.zip_code}"
+
+        # Geocode the address to get latitude and longitude
+        geolocator = Nominatim(user_agent="geoapiExercises")
+        location = geolocator.geocode(full_address)
+        if not location:
+            return Response(
+                {"error": "Invalid address."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        latitude = location.latitude
+        longitude = location.longitude
+
         payload = {
             "question": question,
             "identifier": identifier,
             "data": data,
             "options": options,
-            # "city_id": city_id,
-            # "state_id": state_id,
-            # "publication_date": publication_date,
+            "latitude": latitude,
+            "longitude": longitude,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
@@ -53,6 +83,8 @@ class CreatePollView(APIView):
                     publication_date=publication_date,
                     city_id=city_id,
                     state_id=state_id,
+                    longitude=longitude,
+                    latitude=latitude,
                 )
                 for option in options:
                     Choice.objects.create(question=question, choice_test=option)
@@ -70,7 +102,7 @@ class CreatePollView(APIView):
                 {
                     "error": str(e),
                 },
-                status=HTTP_400_BAD_REQUEST,
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
@@ -120,7 +152,7 @@ class AllPollsView(APIView):
             )
 
 
-# 67731a341cc54200101734eb test poll_id
+# import profile model
 class GetAllVotes(APIView):
     def get(self, request):
         try:

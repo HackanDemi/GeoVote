@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import secrets
 
 POLLS_API_KEY = config("POLLS_API_KEY")
 GROQ_API_KEY = config("GROQ_API_KEY")
@@ -24,7 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+# print(secrets.token_urlsafe(50)) #Print statement gets a secure key that can be used as the default value for SECRET_KEY so I don't have to have the actual key in a .env file
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="oaqe7XGnuj_c5IJ9ucwBSD-GNh25fzDcbiyeDFMTHt6vgol_46bl4ErG41Gqr2lvjtQ",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
