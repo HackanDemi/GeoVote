@@ -41,6 +41,7 @@ export const logIn = async (formData) => {
   if (response.status === 200) {
     const { token, user } = response.data; 
     localStorage.setItem('token', token); 
+    localStorage.setItem('user', JSON.stringify(user));
     api.defaults.headers.common['Authorization'] = `Token ${token}`; 
     return user; 
   }
@@ -51,37 +52,59 @@ export const logIn = async (formData) => {
 
 export const logOut = async(user) => {
   try {
-    let response = await api.post('users/logout/')
+    const token = localStorage.getItem('token');
+    localStorage.removeItem('token');
+    delete api.defaults.headers.common['Authorization'];
 
+    api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+    let response = await api.post('users/logout/')
     if (response.status === 204){
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization']
       console.log('user has logged out')
       return null;
-    }
+    } else {
       console.log('failure to log out')
       return user
+    }
   } catch (err) {
     console.error('logout logic error:', err); 
-    return user; 
+    localStorage.removeItem('token');
+    delete api.defaults.headers.common['Authorization'];
+    return null; 
   }
 };
 
 
 export const getInfo = async() => {
   let token = localStorage.getItem('token');
+  if (!token) {
+    return null;
+  }
 
-  api.defaults.headers.common['Authorization'] = `Token ${token}`
+  api.defaults.headers.common['Authorization'] = `Token ${token}`;
 
   try {
-    let response = await api.get('users/info');
-    if (response.status === 200) {
-      return response.data;
-    } return null;
+    const [userResponse, profileResponse] = await Promise.all([
+      api.get("users/info/"),
+      api.get("profile/info/"),
+    ]);
+
+    if (userResponse.status === 200 && profileResponse.status === 200) {
+      const combinedData = {
+        ...userResponse.data,
+        profile: profileResponse.data,
+      };
+      return combinedData;
+    }
+    return null;
   } catch (err) {
-    console.error('Error getting user info:', err);
+    console.err('err fetching user info:', err.message);
+    if (err.response && err.response.status === 401) {
+      localStorage.removeItem('token');
+    }
+    return null;
   }
-}
+};
 
 
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------

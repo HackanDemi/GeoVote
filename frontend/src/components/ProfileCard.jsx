@@ -1,14 +1,12 @@
-import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid2, MenuItem } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid, MenuItem } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { getInfo } from '../utilities';
 
 
-
 const ProfileCard = () => {
-  const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', street:'', city:'', state:'', zip_code:'', birth_date:'', bio:''}); 
-  const [user, setUser] = useState({});
-  const [edit, setEdit] = useState(false); 
-  const [firstFormData, setFirstFormData] = useState(...formData);
+  const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', birth_date:'', bio:'', address: {street:'', city:'', state:'', zip_code:''}}); 
+  const [user, setUser] = useState(null);
+  const [edit, setEdit] = useState(false);  
 
   const states = [
     { name: 'Alabama', abbreviation: 'AL' },
@@ -66,12 +64,22 @@ const ProfileCard = () => {
 
   const handleStateChange = (evt) => {
     const selectedState = evt.target.value;
-    setFormData({...formData, state: selectedState});
+    setFormData((prevData) => ({
+      ...prevData,
+      address: { ...prevData.address, state: selectedState }
+    }));
   };
 
   const handleInputChange = (evt) => {
-    const {name, value} = evt.target;
-    setFormData({...formData, [name]: value});
+    const { name, value } = evt.target;
+    if (name in formData.address) {
+      setFormData((prevData) => ({
+        ...prevData,
+        address: { ...prevData.address, [name]: value } 
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const toggleEdit = () => {
@@ -79,29 +87,87 @@ const ProfileCard = () => {
   };
 
   const handleSave = () => {
-    const address = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zip_code}`;
-    const updatedUser = {...formData, address};
+    const updatedUser = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      birth_date: formData.birth_date,
+      bio: formData.bio,
+      address: formData.address
+  };
+
+    console.log('Saving to localStorage:', updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setFormData(updatedUser);
+    toggleEdit(); 
     console.log('Updated user profile:', updatedUser);
-    setFirstFormData({...formData});
-    toggleEdit();
+    console.log(user);
   };
 
   const handleCancel = () => {
-    setFormData({...firstFormData});
+    setFormData({...formData});
     toggleEdit();
   }
 
   useEffect(() => {
-    const getUserData = async() => {
-      const userInfo = await getInfo();
-      console.log(userInfo);
-      if (userInfo) {
-        setUser(userInfo);
+    const getUserData = async () => {
+      const savedUser = localStorage.getItem('user');
+      console.log('Saved user in localStorage:', savedUser);
+
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          console.log("Parsed user data:", parsedUser);
+  
+          if (parsedUser) {
+            setFormData({
+              first_name: parsedUser.first_name || '',
+              last_name: parsedUser.last_name || '',
+              email: parsedUser.email || '',
+              birth_date: parsedUser.birth_date || '',
+              bio: parsedUser.bio || '',
+              address: {
+                street: parsedUser.address?.street || '',
+                city: parsedUser.address?.city || '',
+                state: parsedUser.address?.state || '',
+                zip_code: parsedUser.address?.zip_code || ''
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error parsing user data from localStorage:', error);
+        }
+          } else {
+        const userInfo = await getInfo();
+        console.log(await getInfo());
+        console.log("getInfo user data:", userInfo)
+        if (userInfo) {
+          const { first_name, last_name, email, birth_date, address, bio } = userInfo;
+          setUser(userInfo);
+          setFormData({
+            first_name,
+            last_name,
+            email,
+            birth_date,
+            bio,
+            address: {
+              street: address?.street || '',
+              city: address?.city || '',
+              state: address?.state || '',
+              zip_code: address?.zip_code || ''
+            }
+          });
+        }
       }
     };
-    getUserData();
-  })
+      getUserData();
+  }, []);
 
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
 
   return ( 
@@ -146,27 +212,27 @@ const ProfileCard = () => {
               <TextField
                 label="Street"
                 name="street"
-                value={formData.street}
+                value={formData.address.street}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
               />
-            <Grid2 container spacing={5}>
-              <Grid2 item xs={12} sm={4}>
+            <Grid container spacing={5}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="City"
                   name="city"
-                  value={formData.city}
+                  value={formData.address.city}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
                 />
-              </Grid2>
-              <Grid2 item xs={12} sm={4}>
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="State"
                   name="state"
-                  value={formData.state}
+                  value={formData.address.state}
                   onChange={handleStateChange}
                   select
                   sx={{ width: '200px' }}
@@ -178,18 +244,18 @@ const ProfileCard = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid2>
-              <Grid2 item xs={12} sm={4}>
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Zipcode"
                   name="zip_code"
-                  value={formData.zip_code}
+                  value={formData.address.zip_code}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
                 />
-              </Grid2>
-            </Grid2>
+              </Grid>
+            </Grid>
               <TextField
                 label="Bio"
                 name="bio"
@@ -197,8 +263,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                multiline
-              />
+                multiline/>
             </>
           ) : (
             <>
@@ -212,7 +277,7 @@ const ProfileCard = () => {
                 {formData.birth_date}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {formData.address}
+                {`${formData.address?.street || ''}, ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {formData.bio}
@@ -222,18 +287,18 @@ const ProfileCard = () => {
         </CardContent>
         <CardActions>
           {edit ? (
-            <>
-              <Button size="small" onClick={handleSave}>
-                Save
-              </Button>
-              <Button size="small" onClick={handleCancel}>
-                Cancel
-              </Button>
-            </>
-            ) : (
-              <Button size="small" onClick={toggleEdit}>
-                Edit
-              </Button>
+           <>
+            <Button size="small" onClick={handleSave}>
+              Save
+            </Button>
+            <Button size='small' onClick={handleCancel}>
+              Cancel
+            </Button>
+           </> 
+          ) : (
+            <Button size="small" onClick={toggleEdit}>
+              Edit
+            </Button>
           )}
         </CardActions>
       </Card>

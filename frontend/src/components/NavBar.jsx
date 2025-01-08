@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Mui from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import ReactImg from '../assets/croccat.png';
 import LogoImg from '../assets/GeoVote.png';
@@ -19,6 +19,7 @@ const settings = [
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { setUser } = useOutletContext();
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -36,10 +37,11 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
-  const handleLogOut = async() => {
-    try {
+  const handleLogOut = async () => {
+    try{
       await logOut();
-      navigate('/login')
+      setUser(null);
+      navigate('/login');
       console.log('User successfully logged out')
     } catch(err) {
       console.error('Logout failed:', err);
