@@ -12,6 +12,7 @@ from rest_framework.status import (
 from django.conf import settings
 from .models import Question, Choice
 from .serializer import PollSerializer
+from geopy.geocoders import Nominatim
 
 logger = logging.getLogger(__name__)
 
@@ -25,20 +26,32 @@ class CreatePollView(APIView):
         city_id = request.data.get("city_id")
         state_id = request.data.get("state_id")
         publication_date = request.data.get("publication_date")
+        address = request.get("address")
 
         if not question or len(options) < 2:
             return Response(
                 {"error": "A question and at least two options are required."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+        geolocator = Nominatim(user_agent="geoapiExercises")
+        location = geolocator.geocode(address)
+        if not location:
+            return Response(
+                {"error": "Invalid address."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        latitude = location.latitude
+        longitude = location.longitude
+
         payload = {
             "question": question,
             "identifier": identifier,
             "data": data,
             "options": options,
-            # "city_id": city_id,
-            # "state_id": state_id,
-            # "publication_date": publication_date,
+            "latitude": latitude,
+            "longitude": longitude,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
@@ -53,6 +66,8 @@ class CreatePollView(APIView):
                     publication_date=publication_date,
                     city_id=city_id,
                     state_id=state_id,
+                    longitude=longitude,
+                    latitude=latitude,
                 )
                 for option in options:
                     Choice.objects.create(question=question, choice_test=option)
@@ -120,7 +135,7 @@ class AllPollsView(APIView):
             )
 
 
-# 67731a341cc54200101734eb test poll_id
+# import profile model
 class GetAllVotes(APIView):
     def get(self, request):
         try:
