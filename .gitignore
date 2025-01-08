@@ -7,3 +7,8 @@ __pycache__/
 *.sqlite3
 .DS_Store
 .env
+node_modules/
+dist/
+*.log
+.idea/
+.vscode/
