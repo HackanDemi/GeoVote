@@ -14,11 +14,15 @@ from rest_framework.status import (
 from .models import Profile, Address
 from .serializers import ProfileSerializer, AddressSerializer
 from django.contrib.auth import get_user_model
+import googlemaps
+from datetime import datetime
 
 # Create your views here.
 
 
 User = get_user_model()
+
+gmaps = googlemaps.Client(key='AIzaSyApfe4inH77ljKKFKijayQgSxoyLtOp7OU')
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -35,9 +39,22 @@ class ProfileView(APIView):
                 address = Address.objects.get(user=request.user)
             profile_serializer = ProfileSerializer(profile)
             address_serializer = AddressSerializer(address)
+            
+            full_address = f"{address.street}, {address.city}, {address.state} {address.zip_code}"
+            
+            geocode_result = gmaps.geocode(full_address)
+            if geocode_result:
+                latitude = geocode_result[0]['geometry']['location']['lat']
+                longitude = geocode_result[0]['geometry']['location']['lng']
+                print(f"Latitude: {latitude}, Longitude: {longitude}")
+                
             return Response({
                 "profile": profile_serializer.data,
-                "address": address_serializer.data
+                "address": address_serializer.data,
+                "coordinates": {
+                    "latitude": latitude,
+                    "longitude": longitude
+                }
             }, status=HTTP_200_OK)
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
@@ -51,13 +68,24 @@ class ProfileView(APIView):
         address_serializer = AddressSerializer(data=address_data)
     
         if profile_serializer.is_valid() and address_serializer.is_valid():
-            
             address_instance = address_serializer.save(user=request.user)
+            
+            full_address = f"{address_instance.street}, {address_instance.city}, {address_instance.state} {address_instance.zip_code}"
+            geocode_result = gmaps.geocode(full_address)
+            if geocode_result:
+                latitude = geocode_result[0]['geometry']['location']['lat']
+                longitude = geocode_result[0]['geometry']['location']['lng']
+                print(f"Latitude: {latitude}, Longitude: {longitude}")
+            
             profile_instance = profile_serializer.save(user=request.user, address=address_instance)
             
             return Response({
                 "profile": profile_serializer.data,
-                "address": AddressSerializer(Address.objects.get(user=request.user)).data
+                "address": AddressSerializer(address_instance).data,
+                "coordinates": {
+                    "latitude": latitude,
+                    "longitude": longitude
+                }
             }, status=HTTP_201_CREATED)
     
         profile_errors = profile_serializer.errors if not profile_serializer.is_valid() else {}
@@ -84,12 +112,29 @@ class ProfileView(APIView):
         address_serializer = AddressSerializer(address, data=address_data, partial=True) if address_data else None
     
         if profile_serializer.is_valid() and (address_serializer is None or address_serializer.is_valid()):
-            profile_serializer.save()
             if address_serializer:
-                address_serializer.save()
+                address_instance = address_serializer.save()
+                profile_instance = profile_serializer.save(address=address_instance)
+                
+                full_address = f"{address_instance.street}, {address_instance.city}, {address_instance.state} {address_instance.zip_code}"
+                
+                geocode_result = gmaps.geocode(full_address)
+                if geocode_result:
+                    latitude = geocode_result[0]['geometry']['location']['lat']
+                    longitude = geocode_result[0]['geometry']['location']['lng']
+                    print(f"Latitude: {latitude}, Longitude: {longitude}")
+            else:
+                profile_instance = profile_serializer.save()
+                latitude = None
+                longitude = None
+                
             return Response({
                 "profile": ProfileSerializer(profile).data,  # Ensure profile is serialized with updated address
-                "address": AddressSerializer(address).data
+                "address": AddressSerializer(address_instance if address_serializer else address).data,
+                "coordinates": {
+                    "latitude": latitude,
+                    "longitude": longitude
+                }
             }, status=HTTP_200_OK)
     
         # Debug statements to log errors
