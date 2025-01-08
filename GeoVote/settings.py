@@ -13,9 +13,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from decouple import config
 import secrets
+from dotenv import load_dotenv
+import os
 
+GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY")
 POLLS_API_KEY = config("POLLS_API_KEY")
-GROQ_API_KEY = config("GROQ_API_KEY")
+# GROQ_API_KEY = config("GROQ_API_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

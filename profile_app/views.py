@@ -16,13 +16,16 @@ from .serializers import ProfileSerializer, AddressSerializer
 from django.contrib.auth import get_user_model
 import googlemaps
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
 # Create your views here.
 
+load_dotenv()
 
 User = get_user_model()
 
-gmaps = googlemaps.Client(key='AIzaSyApfe4inH77ljKKFKijayQgSxoyLtOp7OU')
+gmaps = googlemaps.Client(key=os.getenv('GOOGLE_MAPS_API_KEY'))
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
