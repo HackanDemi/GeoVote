@@ -1,12 +1,16 @@
-import { Outlet } from 'react-router-dom'
-import './App.css'
+import { Outlet, useLoaderData } from 'react-router-dom';
+import { useState } from 'react';
+import './App.css';
+
+
 
 function App() {
+  const [user, setUser] = useState(useLoaderData());
 
 
   return (
     <>
-    <Outlet/>
+    <Outlet context={{user, setUser}}/>
     </>
   )
 }

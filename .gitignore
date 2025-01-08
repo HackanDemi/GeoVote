@@ -1,5 +1,9 @@
 .env
 venv
 __pycache__/
+*.pyc
+.vite
+=======
 *.pyc.vite/
 .vite/
+
