@@ -95,3 +95,12 @@ class LogOut(TokenReq):
             )
         except Exception as e:
             return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+class Info(TokenReq):
+    def get(self, request):
+       return Response(
+           {
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+            "email": request.user.email,         
+       }) 
