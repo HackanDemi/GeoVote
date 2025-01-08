@@ -13,6 +13,7 @@ from django.conf import settings
 from .models import Question, Choice
 from .serializer import PollSerializer
 from geopy.geocoders import Nominatim
+from profile_app.models import Address  # Imports the address class
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +27,32 @@ class CreatePollView(APIView):
         city_id = request.data.get("city_id")
         state_id = request.data.get("state_id")
         publication_date = request.data.get("publication_date")
-        address = request.get("address")
+        address_id = request.data.get("address_id")
 
         if not question or len(options) < 2:
             return Response(
                 {"error": "A question and at least two options are required."},
-                status=HTTP_500_INTERNAL_SERVER_ERROR,
+                status=HTTP_400_BAD_REQUEST,
             )
 
+        if not address_id:
+            return Response(
+                {"error": "Address ID is required."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        # Get the address from the Address model
+        try:
+            address_obj = Address.objects.get(id=address_id)
+        except Address.DoesNotExist:
+            return Response(
+                {"error": "Address not found."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        full_address = f"{address_obj.street}, {address_obj.city}, {address_obj.state} {address_obj.zip_code}"
+
+        # Geocode the address to get latitude and longitude
         geolocator = Nominatim(user_agent="geoapiExercises")
-        location = geolocator.geocode(address)
+        location = geolocator.geocode(full_address)
         if not location:
             return Response(
                 {"error": "Invalid address."},
@@ -85,7 +102,7 @@ class CreatePollView(APIView):
                 {
                     "error": str(e),
                 },
-                status=HTTP_400_BAD_REQUEST,
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
