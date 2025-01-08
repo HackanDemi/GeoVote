@@ -1,7 +1,7 @@
-
 import NavBar from '../components/NavBar'
 import PollCard from '../components/PollsCard';
 import ProfileCard from '../components/ProfileCard';
+
 
 const ProfilePage = () => {
 
@@ -16,7 +16,6 @@ const ProfilePage = () => {
     <div className='poll-cards'>
       <PollCard/>
     </div>
-    
     </>
     )
   };
