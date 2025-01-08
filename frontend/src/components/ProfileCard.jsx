@@ -97,7 +97,7 @@ const ProfileCard = () => {
   };
 
     console.log('Saving to localStorage:', updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem(formData.email, JSON.stringify(updatedUser));
     setUser(updatedUser);
     setFormData(updatedUser);
     toggleEdit(); 
@@ -112,7 +112,8 @@ const ProfileCard = () => {
 
   useEffect(() => {
     const getUserData = async () => {
-      const savedUser = localStorage.getItem('user');
+      const userEmail = formData.email;
+      const savedUser = localStorage.getItem(userEmail);
       console.log('Saved user in localStorage:', savedUser);
 
       if (savedUser) {
@@ -162,17 +163,13 @@ const ProfileCard = () => {
       }
     };
       getUserData();
-  }, []);
+  }, [formData.email]);
 
-
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
 
   return ( 
     <>
-    <Container>
+    <Container className='profile-card'>
       <Card sx={{ maxWidth: 900 }}>
         <CardContent>
           {edit ? (

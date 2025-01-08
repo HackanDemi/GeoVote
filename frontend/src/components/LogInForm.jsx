@@ -31,6 +31,10 @@ const LogInForm = () => {
     };
   };
 
+  const handleLogInClick = () => {
+    navigate('/home');
+  }
+
   return (
     <>
       <Container className='login-form'>
@@ -62,7 +66,7 @@ const LogInForm = () => {
             Sign in with Google
           </Button>
 
-          <Button variant='outlined' type='submit'>
+          <Button variant='outlined' onClick={handleLogInClick}>
               Log In
             </Button>
 
