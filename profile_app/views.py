@@ -36,29 +36,43 @@ class ProfileView(APIView):
         try:
             if pk:
                 profile = Profile.objects.get(pk=pk, user=request.user)
-                address = Address.objects.get(pk=profile.address.pk, user=request.user)
+                address = Address.objects.filter(pk=profile.address.pk, user=request.user).first()
             else:
                 profile = Profile.objects.get(user=request.user)
-                address = Address.objects.get(user=request.user)
+                address = Address.objects.filter(user=request.user).first()
+            
+            if not address:
+                address = None
+                
             profile_serializer = ProfileSerializer(profile)
-            address_serializer = AddressSerializer(address)
+            address_serializer = AddressSerializer(address) if address else None
             
-            full_address = f"{address.street}, {address.city}, {address.state} {address.zip_code}"
+            full_address = ''
             
-            geocode_result = gmaps.geocode(full_address)
-            if geocode_result:
-                latitude = geocode_result[0]['geometry']['location']['lat']
-                longitude = geocode_result[0]['geometry']['location']['lng']
-                print(f"Latitude: {latitude}, Longitude: {longitude}")
+            if address:
+                full_address = f"{address.street}, {address.city}, {address.state} {address.zip_code}"
+            
+            latitude = longitude = None
+            
+            if full_address:
+                geocode_result = gmaps.geocode(full_address)
+            
+                if geocode_result:
+                    latitude = geocode_result[0]['geometry']['location']['lat']
+                    longitude = geocode_result[0]['geometry']['location']['lng']
+                    print(f"Latitude: {latitude}, Longitude: {longitude}")
+            
+            coordinates = {
+                "latitude": latitude,
+                "longitude": longitude
+            }
                 
             return Response({
                 "profile": profile_serializer.data,
                 "address": address_serializer.data,
-                "coordinates": {
-                    "latitude": latitude,
-                    "longitude": longitude
-                }
+                "coordinates": coordinates
             }, status=HTTP_200_OK)
+            
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
     
@@ -102,9 +116,14 @@ class ProfileView(APIView):
     
     def put(self, request, pk=None):
         print(f"Authenticated user: {request.user}")  # Debug statement
+        
         try:
             profile = Profile.objects.get(pk=pk, user=request.user)
-            address = Address.objects.get(pk=profile.address.pk, user=request.user)
+            address = Address.objects.filter(pk=profile.address.pk, user=request.user).first()
+            
+            if not address:
+                address = None
+                
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
     

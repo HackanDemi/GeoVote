@@ -1,15 +1,15 @@
-from rest_framework.serializers import ModelSerializer, ReadOnlyField
+from rest_framework.serializers import ModelSerializer, StringRelatedField
 from .models import Profile, Address
 
 class ProfileSerializer(ModelSerializer):
-    address = ReadOnlyField(source='address.__str__')
+    address = StringRelatedField(source='address.__str__')
     
     class Meta:
         model = Profile
         fields = '__all__'
 
 class AddressSerializer(ModelSerializer):
-    user = ReadOnlyField(source='user.email')
+    user = StringRelatedField()
     
     class Meta:
         model = Address
