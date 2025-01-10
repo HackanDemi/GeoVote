@@ -1,28 +1,56 @@
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { Container } from '@mui/material';
+import {Card, CardActions, CardContent, Button, Container, createTheme, ThemeProvider} from '@mui/material';
 
 
 const PollCard = () => {
 
+  const theme = createTheme({
+    palette: {
+      background: {
+        paper: '#1e1e2f',
+      },
+      text: {
+        primary: "#d3d3d3",
+        secondary: "#acacac",
+      },
+    }
+  });
+
+  const textStyles = {
+    color: "text.primary",
+    marginBottom: "8px",
+  };
+
+  const nameStyles = {
+    ...textStyles,
+    fontSize: "32px", 
+    fontWeight: "bold",
+  };
+
+
+
+
   return ( 
     <>
-    <Container>
-      <Card sx={{ maxWidth: 900 }}>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            (poll name)
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            (poll question)
-          </Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            (poll choices)
-          </Typography>
+    <ThemeProvider theme={theme}>
+    <Container classname='poll-card-container'>
+    <Card className='poll-card'
+        sx={{
+          bgcolor: 'background.paper', 
+          borderRadius: "15px",
+          boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+          margin: "20px auto",
+          padding: "20px",
+        }}>
+        <CardContent className='poll-card-content'>
+          <div style={nameStyles}>
+            Poll name
+          </div>
+          <div style={textStyles}>
+            poll option
+          </div>
+          <div style={textStyles}>
+            poll options
+          </div>
 
 
         </CardContent>
@@ -31,6 +59,7 @@ const PollCard = () => {
         </CardActions>
       </Card>
     </Container>
+    </ThemeProvider>
     </>
   )
 }

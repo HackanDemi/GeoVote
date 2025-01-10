@@ -1,6 +1,7 @@
-import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid, MenuItem, ThemeProvider, createTheme } from '@mui/material';
+import { Card, CardActions, CardContent, Button, Container, Grid, MenuItem, ThemeProvider, createTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getInfo } from '../utilities';
+import { getInfo } from '../utilities'; //  , updateUserProfile
+import CustomTextField from './CustomText';
 
 
   const theme = createTheme({
@@ -15,7 +16,16 @@ import { getInfo } from '../utilities';
     }
   });
 
+  const textStyles = {
+    color: "text.primary",
+    marginBottom: "8px",
+  };
 
+  const nameStyles = {
+    ...textStyles,
+    fontSize: "32px", 
+    fontWeight: "bold",
+  };
 
 
 const ProfileCard = () => {
@@ -98,6 +108,20 @@ const ProfileCard = () => {
     }
   };
 
+  // const handleFileChange = (evt) => {
+  //   const file = evt.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       profile_picture: reader.result
+  //     }));
+  //   };
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
   const toggleEdit = () => {
     setEdit(!edit);
   };
@@ -109,8 +133,17 @@ const ProfileCard = () => {
       email: formData.email,
       birth_date: formData.birth_date,
       bio: formData.bio,
-      address: formData.address
+      address: formData.address,
+      // profile_picture: formData.profile_picture
   };
+  
+//   const response = await updateUserProfile(updatedUser);
+//   if (response) {
+//     setUser(response);
+//     setFormData(response);
+//     toggleEdit();
+//   }
+// };
 
     console.log('Saving to localStorage:', updatedUser);
     localStorage.setItem(formData.email, JSON.stringify(updatedUser));
@@ -149,7 +182,8 @@ const ProfileCard = () => {
                 city: parsedUser.address?.city || '',
                 state: parsedUser.address?.state || '',
                 zip_code: parsedUser.address?.zip_code || ''
-              }
+              },
+              // profile_picture: parsedUser.profile_picture || ''
             });
           }
         } catch (error) {
@@ -160,7 +194,7 @@ const ProfileCard = () => {
         console.log(await getInfo());
         console.log("getInfo user data:", userInfo)
         if (userInfo) {
-          const { first_name, last_name, email, birth_date, address, bio } = userInfo;
+          const { first_name, last_name, email, birth_date, address, bio } = userInfo; //, profile_picture
           setUser(userInfo);
           setFormData({
             first_name,
@@ -173,25 +207,14 @@ const ProfileCard = () => {
               city: address?.city || '',
               state: address?.state || '',
               zip_code: address?.zip_code || ''
-            }
+            },
+
           });
         }
       }
     };
       getUserData();
   }, [formData.email]);
-
-
-  const textFieldStyles = {
-    backgroundColor: 'inputbg.inputbg',
-    borderRadius: '5px',
-    "& .MuiInputBase-input": {
-      color: "text.primary",
-    },
-    "& .MuiInputLabel-root": {
-      color: "text.secondary",
-    },
-  };
 
 
 
@@ -210,110 +233,59 @@ const ProfileCard = () => {
         <CardContent className='card-content'>
           {edit ? (
             <>
-              <TextField
+              <CustomTextField
                 label="First Name"
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                sx={{textFieldStyles}}
               />
-              <TextField
+              <CustomTextField
                 label="Last Name"
                 name="last_name"
                 value={formData.last_name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                sx={{
-                  backgroundColor: "inputbg.inputbg", 
-                  borderRadius: "5px",
-                  "& .MuiInputBase-input": {
-                    color: "#d3d3d3", 
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#acacac", 
-                  },
-                }}
               />
-              <TextField
+              <CustomTextField
                 label="Email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                sx={{
-                  backgroundColor: "#2b2b3b", 
-                  borderRadius: "5px",
-                  "& .MuiInputBase-input": {
-                    color: "#d3d3d3", 
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#acacac", 
-                  },
-                }}
               />
-              <TextField
+              <CustomTextField
                 name="birth_date"
                 type="date"
                 value={formData.birth_date}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                sx={{
-                  backgroundColor: "#2b2b3b", 
-                  borderRadius: "5px",
-                  "& .MuiInputBase-input": {
-                    color: "#d3d3d3", 
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#acacac", 
-                  },
-                }}
               />
-              <TextField
+              <CustomTextField
                 label="Street"
                 name="street"
                 value={formData.address.street}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                sx={{
-                  backgroundColor: "#2b2b3b", 
-                  borderRadius: "5px",
-                  "& .MuiInputBase-input": {
-                    color: "#d3d3d3", 
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#acacac", 
-                  },
-                }}
               />
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="City"
                   name="city"
                   value={formData.address.city}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
-                  sx={{
-                    backgroundColor: "#2b2b3b", 
-                    borderRadius: "5px",
-                    "& .MuiInputBase-input": {
-                      color: "#d3d3d3", 
-                    },
-                    "& .MuiInputLabel-root": {
-                      color: "#acacac", 
-                    },
-                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="State"
                   name="state"
                   value={formData.address.state}
@@ -321,46 +293,26 @@ const ProfileCard = () => {
                   select
                   fullWidth
                   margin="normal"
-                  sx={{
-                    backgroundColor: "#2b2b3b", 
-                    borderRadius: "5px",
-                    "& .MuiInputBase-input": {
-                      color: "#d3d3d3", 
-                    },
-                    "& .MuiInputLabel-root": {
-                      color: "#acacac", 
-                    },
-                  }}
                 >
                   {states.map((state) => (
                     <MenuItem key={state.abbreviation} value={state.abbreviation}>
                       {state.name}
                     </MenuItem>
                   ))}
-                </TextField>
+                </CustomTextField>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="Zipcode"
                   name="zip_code"
                   value={formData.address.zip_code}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
-                  sx={{
-                    backgroundColor: "#2b2b3b", 
-                    borderRadius: "5px",
-                    "& .MuiInputBase-input": {
-                      color: "#d3d3d3", 
-                    },
-                    "& .MuiInputLabel-root": {
-                      color: "#acacac", 
-                    },
-                  }}
                 />
               </Grid>
             </Grid>
-              <TextField
+              <CustomTextField
                 label="Bio"
                 name="bio"
                 value={formData.bio}
@@ -368,36 +320,46 @@ const ProfileCard = () => {
                 fullWidth
                 margin="normal"
                 multiline
-                sx={{
-                  backgroundColor: "#2b2b3b", 
-                  borderRadius: "5px",
-                  "& .MuiInputBase-input": {
-                    color: "#d3d3d3", 
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#acacac", 
-                  },
-                }}
               />
+              {/* <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              {formData.profile_picture && (
+                <img
+                  src={formData.profile_picture}
+                  alt="Profile"
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginTop: '10px' }}
+                />
+              )} */}
+
             </>
           ) : (
             <>
-              <Typography gutterBottom variant="h5" component="div" textColor="#ffffff" >
-                {formData.first_name} {formData.last_name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#ffffff" }}>
-                {formData.email}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#ffffff" }}>
-                {formData.birth_date}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#ffffff" }}>
-                {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#ffffff" }}>
-                {formData.bio}
-              </Typography>
-            </>
+              {/* {formData.profile_picture && (
+                <img
+                  src={formData.profile_picture}
+                  alt="Profile"
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
+                />
+              )} */}
+                <div style={nameStyles}>
+                  {formData.first_name} {formData.last_name}
+                </div>
+                <div style={textStyles}>
+                  {formData.email}
+                </div>
+                <div style={textStyles}>
+                  {formData.birth_date}
+                </div>
+                <div style={textStyles}>
+                  {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
+                </div>
+                <div style={textStyles}>
+                  {formData.bio}
+                </div>
+              </>
           )}
         </CardContent>
         <CardActions>

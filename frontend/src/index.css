@@ -203,4 +203,17 @@
     background-color: #822ed6;
   }
 
+/* ------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
+
+.poll-card-container {
+  margin-top: 20px;
+  background-color: #1e1e2f; 
+  box-shadow: 0 4px 20px rgba(128, 90, 213, 0.8);
+  padding: 20px;
+  border-radius: 15px;
+  width: 100vw;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}

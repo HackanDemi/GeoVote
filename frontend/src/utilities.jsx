@@ -98,13 +98,41 @@ export const getInfo = async() => {
     }
     return null;
   } catch (err) {
-    console.err('err fetching user info:', err.message);
+    console.error('err fetching user info:', err.message);
     if (err.response && err.response.status === 401) {
       localStorage.removeItem('token');
     }
     return null;
   }
 };
+
+// export const updateUserProfile = async(formData) => {
+//   const { first_name, last_name, email, birth_date, bio, address, profile_picture } = formData;
+//   let formDataObj = new FormData();
+//   formDataObj.append('first_name', first_name);
+//   formDataObj.append('last_name', last_name);
+//   formDataObj.append('email', email);
+//   formDataObj.append('birth_date', birth_date);
+//   formDataObj.append('bio', bio);
+//   formDataObj.append('address', JSON.stringify(address));
+//   if (profile_picture) {
+//     formDataObj.append('profile_picture', profile_picture);
+//   }
+
+//   let response = await api.put('profile/update/', formDataObj, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data'
+//     }
+//   });
+
+//   if (response.status === 200) {
+//     const user = response.data;
+//     localStorage.setItem('user', JSON.stringify(user));
+//     return user;
+//   }
+//   console.log(response.data);
+//   return null;
+// };
 
 
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------

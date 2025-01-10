@@ -1,16 +1,12 @@
 import NavBar from '../components/NavBar'
-import PollCard from '../components/PollsCard'
+import PizzaPoll from '../components/PizzaPoll'
 
 export default function PollPage() {
   return (
     <>
     <NavBar />
-
     <div>PollPage</div>
-
-    <div> 
-      <PollCard/>
-    </div>
+    <PizzaPoll />
     </>
   )
 }
