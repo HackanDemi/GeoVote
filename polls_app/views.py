@@ -15,8 +15,15 @@ from .serializer import PollSerializer
 from geopy.geocoders import Nominatim
 from profile_app.models import Address  # Imports the address class
 import random
+import googlemaps
+import os
+from dotenv import load_dotenv  # Loads environment variables from .env file
 
 logger = logging.getLogger(__name__)
+
+gmaps = googlemaps.Client(
+    key=os.getenv("GOOGLE_MAPS_API")
+)  # Initialized with the API key from the environment variables
 
 
 class CreatePollView(APIView):
@@ -51,17 +58,18 @@ class CreatePollView(APIView):
 
         full_address = f"{address_obj.street}, {address_obj.city}, {address_obj.state} {address_obj.zip_code}"
 
-        # Geocode the address to get latitude and longitude
-        geolocator = Nominatim(user_agent="geoapiExercises")
-        location = geolocator.geocode(full_address)
-        if not location:
+        geocode_result = gmaps.geocode(
+            full_address
+        )  # Sends a request to the Google Maps Geocoding API to get lat/lng of the address
+        if not geocode_result:
             return Response(
                 {"error": "Invalid address."},
                 status=HTTP_400_BAD_REQUEST,
             )
-
-        latitude = location.latitude
-        longitude = location.longitude
+        location = geocode_result[0]["geometry"]["location"]
+        latitude = location["lat"]
+        longitude = location["lng"]
+        # Lat/lng are extraced from the response and included in the payload sent to the Polls API
 
         payload = {
             "question": question,
@@ -179,7 +187,8 @@ class NextQuestionView(APIView):
         shown_questions.append(next_question.id)
         request.session["shown_questions"] = shown_questions
         """The shown_questions list is updated with the new question's ID
-        and saved back to the session. Returns the next question and its options in the response."""
+        and saved back to the session. Returns the next question and its 
+        options in the response."""
 
         return Response(
             {

@@ -27,11 +27,9 @@ if __name__ == "__main__":
 
 GOOGLE_MAPS_API_KEY = config(
     "GOOGLE_MAPS_API_KEY",
-    default="sUve-ClxZDvunpiD-iDA16gS5E1EPAUave_p6IpCm1wj__0eosS1yDS4K16ORUbAo0Q",
 )
 POLLS_API_KEY = config(
     "POLLS_API_KEY",
-    default="R_xtLUlivD4ud5HnWMk6XpZBrwk3eaGOCn5FupK2-ckW4xAwo25A1L1QuMZMmjXx3y8",
 )
 # GROQ_API_KEY = config("GROQ_API_KEY")
 
