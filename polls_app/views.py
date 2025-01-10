@@ -76,8 +76,6 @@ class CreatePollView(APIView):
             "identifier": identifier,
             "data": data,
             "options": options,
-            "latitude": latitude,
-            "longitude": longitude,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
         headers = {
@@ -92,8 +90,8 @@ class CreatePollView(APIView):
                     publication_date=publication_date,
                     city_id=city_id,
                     state_id=state_id,
-                    longitude=longitude,
                     latitude=latitude,
+                    longitude=longitude,
                 )
                 for option in options:
                     Choice.objects.create(question=question, choice_test=option)
