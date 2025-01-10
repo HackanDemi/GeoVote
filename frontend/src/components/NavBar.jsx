@@ -25,6 +25,7 @@ function NavBar() {
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -78,7 +79,6 @@ function NavBar() {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               sx={{ color: '#FFFFFF' }}>
-
               <MenuIcon />
             </Mui.IconButton>
             <Mui.Menu

@@ -125,9 +125,66 @@
 
   /* ---------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-.profile-card { 
-    padding-bottom: 20px;
+   body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  
+  .profile-card .MuiTypography-root {
+    color: #000000; 
+  }
+
+  .profile-card .text-field {
+    background-color: #1c2333; 
+    color: #ffffff;
+    border-radius: 5px;
+    width: 100%;
+    margin: 10px 0;
+    border: 1px solid #444; 
+  }
+  
+  .profile-card .text-field input {
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    outline: none;
+    padding: 10px;
+    width: calc(100% - 20px); 
+  }
+  
+  .profile-card .button-save,
+  .profile-card .button-cancel,
+  .profile-card .button-edit {
+    background-color: #a64eff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .profile-card .button-save:hover {
+    background-color: #822ed6;
+  }
+  
+  .profile-card .button-cancel {
+    background-color: #969696;
+  }
+  
+  .profile-card .button-cancel:hover {
+    background-color: #5a5a5a;
+  }
+  
+  .profile-card .button-edit:hover {
+    background-color: #822ed6;
+  }
+
+/* ------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+
+
+.your-polls {
+  text-align: center;
 }
-
-
-

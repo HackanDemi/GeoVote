@@ -1,12 +1,37 @@
-import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid, MenuItem } from '@mui/material';
+import { Card, CardActions, CardContent, Button, Container, Grid, MenuItem, ThemeProvider, createTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getInfo } from '../utilities';
+import { getInfo } from '../utilities'; //  , updateUserProfile
+import CustomTextField from './CustomText';
 
+
+  const theme = createTheme({
+    palette: {
+      background: {
+        paper: '#1e1e2f',
+      },
+      text: {
+        primary: "#d3d3d3",
+        secondary: "#acacac",
+      },
+    }
+  });
+
+  const textStyles = {
+    color: "text.primary",
+    marginBottom: "8px",
+  };
+
+  const nameStyles = {
+    ...textStyles,
+    fontSize: "32px", 
+    fontWeight: "bold",
+  };
 
 const ProfileCard = () => {
   const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', birth_date:'', bio:'', address: {street:'', city:'', state:'', zip_code:''}}); 
   const [user, setUser] = useState(null);
   const [edit, setEdit] = useState(false);  
+
 
   const states = [
     { name: 'Alabama', abbreviation: 'AL' },
@@ -82,6 +107,20 @@ const ProfileCard = () => {
     }
   };
 
+  // const handleFileChange = (evt) => {
+  //   const file = evt.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       profile_picture: reader.result
+  //     }));
+  //   };
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
   const toggleEdit = () => {
     setEdit(!edit);
   };
@@ -93,8 +132,17 @@ const ProfileCard = () => {
       email: formData.email,
       birth_date: formData.birth_date,
       bio: formData.bio,
-      address: formData.address
+      address: formData.address,
+      // profile_picture: formData.profile_picture
   };
+
+//   const response = await updateUserProfile(updatedUser);
+//   if (response) {
+//     setUser(response);
+//     setFormData(response);
+//     toggleEdit();
+//   }
+// };
 
     console.log('Saving to localStorage:', updatedUser);
     localStorage.setItem(formData.email, JSON.stringify(updatedUser));
@@ -133,7 +181,8 @@ const ProfileCard = () => {
                 city: parsedUser.address?.city || '',
                 state: parsedUser.address?.state || '',
                 zip_code: parsedUser.address?.zip_code || ''
-              }
+              },
+              // profile_picture: parsedUser.profile_picture || ''
             });
           }
         } catch (error) {
@@ -144,7 +193,7 @@ const ProfileCard = () => {
         console.log(await getInfo());
         console.log("getInfo user data:", userInfo)
         if (userInfo) {
-          const { first_name, last_name, email, birth_date, address, bio } = userInfo;
+          const { first_name, last_name, email, birth_date, address, bio } = userInfo; //, profile_picture
           setUser(userInfo);
           setFormData({
             first_name,
@@ -157,7 +206,8 @@ const ProfileCard = () => {
               city: address?.city || '',
               state: address?.state || '',
               zip_code: address?.zip_code || ''
-            }
+            },
+
           });
         }
       }
@@ -169,139 +219,180 @@ const ProfileCard = () => {
 
   return ( 
     <>
-    <Container className='profile-card'>
-      <Card sx={{ maxWidth: 900 }}>
-        <CardContent>
+    <ThemeProvider theme={theme}>
+    <Container className='profile-card-container' disableGutters>
+      <Card className='profile-card'
+        sx={{
+          bgcolor: 'background.paper', 
+          borderRadius: "15px",
+          boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+          margin: "20px auto",
+          padding: "20px",
+        }}>
+        <CardContent className='card-content'>
           {edit ? (
             <>
-              <TextField
+              <CustomTextField
                 label="First Name"
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
-              <TextField
+              <CustomTextField
                 label="Last Name"
                 name="last_name"
                 value={formData.last_name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
-              <TextField
+              <CustomTextField
                 label="Email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
-              <TextField
+              <CustomTextField
                 name="birth_date"
                 type="date"
                 value={formData.birth_date}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
-              <TextField
+              <CustomTextField
                 label="Street"
                 name="street"
                 value={formData.address.street}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
-            <Grid container spacing={5}>
+            <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="City"
                   name="city"
                   value={formData.address.city}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  edit={edit}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="State"
                   name="state"
                   value={formData.address.state}
                   onChange={handleStateChange}
                   select
-                  sx={{ width: '200px' }}
-                  margin="normal">
-
+                  fullWidth
+                  margin="normal"
+                  edit={edit}
+                >
                   {states.map((state) => (
                     <MenuItem key={state.abbreviation} value={state.abbreviation}>
                       {state.name}
                     </MenuItem>
                   ))}
-                </TextField>
+                </CustomTextField>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
+                <CustomTextField
                   label="Zipcode"
                   name="zip_code"
                   value={formData.address.zip_code}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  edit={edit}
                 />
               </Grid>
             </Grid>
-              <TextField
+              <CustomTextField
                 label="Bio"
                 name="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                multiline/>
+                multiline
+                edit={edit}
+              />
+              {/* <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              {formData.profile_picture && (
+                <img
+                  src={formData.profile_picture}
+                  alt="Profile"
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginTop: '10px' }}
+                />
+              )} */}
+
             </>
           ) : (
             <>
-              <Typography gutterBottom variant="h5" component="div">
-                {formData.first_name} {formData.last_name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {formData.email}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {formData.birth_date}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {`${formData.address?.street || ''}, ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {formData.bio}
-              </Typography>
-            </>
+              {/* {formData.profile_picture && (
+                <img
+                  src={formData.profile_picture}
+                  alt="Profile"
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
+                />
+              )} */}
+                <div style={nameStyles}>
+                  {formData.first_name} {formData.last_name}
+                </div>
+                <div style={textStyles}>
+                  {formData.email}
+                </div>
+                <div style={textStyles}>
+                  {formData.birth_date}
+                </div>
+                <div style={textStyles}>
+                  {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
+                </div>
+                <div style={textStyles}>
+                  {formData.bio}
+                </div>
+              </>
           )}
         </CardContent>
         <CardActions>
           {edit ? (
            <>
-            <Button size="small" onClick={handleSave}>
+            <Button size="small" onClick={handleSave} className='button-save'>
               Save
             </Button>
-            <Button size='small' onClick={handleCancel}>
+            <Button size='small' onClick={handleCancel} className='button-cancel'>
               Cancel
             </Button>
            </> 
           ) : (
-            <Button size="small" onClick={toggleEdit}>
+            <Button size="small" onClick={toggleEdit} className='button-edit'>
               Edit
             </Button>
           )}
+          
         </CardActions>
       </Card>
     </Container>
+    </ThemeProvider>
     </>
   )
 }
 
 export default ProfileCard;
+
