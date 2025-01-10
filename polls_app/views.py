@@ -14,6 +14,7 @@ from .models import Question, Choice
 from .serializer import PollSerializer
 from geopy.geocoders import Nominatim
 from profile_app.models import Address  # Imports the address class
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +108,12 @@ class CreatePollView(APIView):
 
 
 class AllPollsView(APIView):
+    """To get the AllPollsView to cycle throught the
+    questions follow the steps below:
+    1. Store shown questions in the user's session
+    2. Fetch a random poll that hasn't been shown yet
+    3. Update the user's session with a new poll"""
+
     def get(self, request):
         try:
             offset = int(request.query_params.get("offset", 0))
@@ -129,8 +136,8 @@ class AllPollsView(APIView):
                     return Response(response.json(), status=HTTP_200_OK)
                 except ValueError:
                     return Response(
-                        {"error": "Invalid response from Polls API."},
-                        status=HTTP_500_INTERNAL_SERVER_ERROR,
+                        {"error": "Failed to fetch polls."},
+                        status=response.status_code,
                     )
             else:
                 try:
@@ -150,6 +157,39 @@ class AllPollsView(APIView):
                 {"error": "An error occured connecting to Polls API."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class NextQuestionView(APIView):
+    """Uses Django's session framework to keep track of the questions
+    that have already been shown to the user. the shown_questions
+    list is stored in the user's session."""
+
+    def get(self, request):
+        shown_questions = request.session.get("shown_questions", [])
+        all_questions = list(Question.objects.exclude(id__in=shown_questions))
+
+        if not all_questions:
+            return Response(
+                {"error": "No more questions available."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        """Fetches a random question that hasn't been shown yet by 
+        excluding the IDs in the shown_questions list"""
+        next_question = random.choice(all_questions)
+        shown_questions.append(next_question.id)
+        request.session["shown_questions"] = shown_questions
+        """The shown_questions list is updated with the new question's ID
+        and saved back to the session. Returns the next question and its options in the response."""
+
+        return Response(
+            {
+                "question": next_question.question_text,
+                "options": [
+                    choice.choice_text for choice in next_question.choice_set.all()
+                ],
+            },
+            status=HTTP_200_OK,
+        )
 
 
 # import profile model
