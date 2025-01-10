@@ -9,9 +9,7 @@ const ProfilePage = () => {
     return (
       <>
     <NavBar />
-    <div className='profile-card'>
-      <ProfileCard/>
-    </div>
+    <ProfileCard/>
 
     <div className='poll-cards'>
       <PollCard/>

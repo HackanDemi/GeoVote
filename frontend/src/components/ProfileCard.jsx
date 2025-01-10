@@ -1,12 +1,28 @@
-import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid, MenuItem } from '@mui/material';
+import { Card, CardActions, CardContent, Button, Typography, TextField, Container, Grid, MenuItem, ThemeProvider, createTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getInfo } from '../utilities';
+
+
+  const theme = createTheme({
+    palette: {
+      background: {
+        paper: '#1e1e2f',
+      },
+      text: {
+        primary: "#d3d3d3",
+        secondary: "#acacac",
+      },
+    }
+  });
+
+
 
 
 const ProfileCard = () => {
   const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', birth_date:'', bio:'', address: {street:'', city:'', state:'', zip_code:''}}); 
   const [user, setUser] = useState(null);
   const [edit, setEdit] = useState(false);  
+
 
   const states = [
     { name: 'Alabama', abbreviation: 'AL' },
@@ -166,12 +182,32 @@ const ProfileCard = () => {
   }, [formData.email]);
 
 
+  const textFieldStyles = {
+    backgroundColor: 'inputbg.inputbg',
+    borderRadius: '5px',
+    "& .MuiInputBase-input": {
+      color: "text.primary",
+    },
+    "& .MuiInputLabel-root": {
+      color: "text.secondary",
+    },
+  };
+
+
 
   return ( 
     <>
-    <Container className='profile-card'>
-      <Card sx={{ maxWidth: 900 }}>
-        <CardContent>
+    <ThemeProvider theme={theme}>
+    <Container className='profile-card-container' disableGutters>
+      <Card className='profile-card'
+        sx={{
+          bgcolor: 'background.paper', 
+          borderRadius: "15px",
+          boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+          margin: "20px auto",
+          padding: "20px",
+        }}>
+        <CardContent className='card-content'>
           {edit ? (
             <>
               <TextField
@@ -181,6 +217,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{textFieldStyles}}
               />
               <TextField
                 label="Last Name"
@@ -189,6 +226,16 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{
+                  backgroundColor: "inputbg.inputbg", 
+                  borderRadius: "5px",
+                  "& .MuiInputBase-input": {
+                    color: "#d3d3d3", 
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#acacac", 
+                  },
+                }}
               />
               <TextField
                 label="Email"
@@ -197,6 +244,16 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{
+                  backgroundColor: "#2b2b3b", 
+                  borderRadius: "5px",
+                  "& .MuiInputBase-input": {
+                    color: "#d3d3d3", 
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#acacac", 
+                  },
+                }}
               />
               <TextField
                 name="birth_date"
@@ -205,6 +262,16 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{
+                  backgroundColor: "#2b2b3b", 
+                  borderRadius: "5px",
+                  "& .MuiInputBase-input": {
+                    color: "#d3d3d3", 
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#acacac", 
+                  },
+                }}
               />
               <TextField
                 label="Street"
@@ -213,8 +280,18 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                sx={{
+                  backgroundColor: "#2b2b3b", 
+                  borderRadius: "5px",
+                  "& .MuiInputBase-input": {
+                    color: "#d3d3d3", 
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#acacac", 
+                  },
+                }}
               />
-            <Grid container spacing={5}>
+            <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
                 <TextField
                   label="City"
@@ -223,6 +300,16 @@ const ProfileCard = () => {
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  sx={{
+                    backgroundColor: "#2b2b3b", 
+                    borderRadius: "5px",
+                    "& .MuiInputBase-input": {
+                      color: "#d3d3d3", 
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "#acacac", 
+                    },
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -232,9 +319,19 @@ const ProfileCard = () => {
                   value={formData.address.state}
                   onChange={handleStateChange}
                   select
-                  sx={{ width: '200px' }}
-                  margin="normal">
-
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    backgroundColor: "#2b2b3b", 
+                    borderRadius: "5px",
+                    "& .MuiInputBase-input": {
+                      color: "#d3d3d3", 
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "#acacac", 
+                    },
+                  }}
+                >
                   {states.map((state) => (
                     <MenuItem key={state.abbreviation} value={state.abbreviation}>
                       {state.name}
@@ -250,6 +347,16 @@ const ProfileCard = () => {
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  sx={{
+                    backgroundColor: "#2b2b3b", 
+                    borderRadius: "5px",
+                    "& .MuiInputBase-input": {
+                      color: "#d3d3d3", 
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "#acacac", 
+                    },
+                  }}
                 />
               </Grid>
             </Grid>
@@ -260,23 +367,34 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
-                multiline/>
+                multiline
+                sx={{
+                  backgroundColor: "#2b2b3b", 
+                  borderRadius: "5px",
+                  "& .MuiInputBase-input": {
+                    color: "#d3d3d3", 
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#acacac", 
+                  },
+                }}
+              />
             </>
           ) : (
             <>
-              <Typography gutterBottom variant="h5" component="div">
+              <Typography gutterBottom variant="h5" component="div" textColor="#ffffff" >
                 {formData.first_name} {formData.last_name}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ color: "#ffffff" }}>
                 {formData.email}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ color: "#ffffff" }}>
                 {formData.birth_date}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {`${formData.address?.street || ''}, ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
+              <Typography variant="body2" sx={{ color: "#ffffff" }}>
+                {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ color: "#ffffff" }}>
                 {formData.bio}
               </Typography>
             </>
@@ -285,23 +403,26 @@ const ProfileCard = () => {
         <CardActions>
           {edit ? (
            <>
-            <Button size="small" onClick={handleSave}>
+            <Button size="small" onClick={handleSave} className='button-save'>
               Save
             </Button>
-            <Button size='small' onClick={handleCancel}>
+            <Button size='small' onClick={handleCancel} className='button-cancel'>
               Cancel
             </Button>
            </> 
           ) : (
-            <Button size="small" onClick={toggleEdit}>
+            <Button size="small" onClick={toggleEdit} className='button-edit'>
               Edit
             </Button>
           )}
+          
         </CardActions>
       </Card>
     </Container>
+    </ThemeProvider>
     </>
   )
 }
 
 export default ProfileCard;
+
