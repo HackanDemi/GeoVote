@@ -1,8 +1,6 @@
 import {Card, CardActions, CardContent, Button, Container, createTheme, ThemeProvider} from '@mui/material';
 
 
-const PollCard = () => {
-
   const theme = createTheme({
     palette: {
       background: {
@@ -28,11 +26,14 @@ const PollCard = () => {
 
 
 
+const PollCard = ({ readOnly, edit, onDelete }) => {
+
+
 
   return ( 
     <>
     <ThemeProvider theme={theme}>
-    <Container classname='poll-card-container'>
+    <Container>
     <Card className='poll-card'
         sx={{
           bgcolor: 'background.paper', 
@@ -51,11 +52,15 @@ const PollCard = () => {
           <div style={textStyles}>
             poll options
           </div>
-
-
         </CardContent>
         <CardActions>
-          <Button size="small">Edit</Button>
+          {editable && (
+            <Button size="small">Edit</Button>
+          )}
+          {readOnly && (
+            <Button size='small' onClick={onDelete}>Delete</Button>
+          )}
+          
         </CardActions>
       </Card>
     </Container>

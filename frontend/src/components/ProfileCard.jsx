@@ -27,7 +27,6 @@ import CustomTextField from './CustomText';
     fontWeight: "bold",
   };
 
-
 const ProfileCard = () => {
   const [formData, setFormData] = useState({first_name:'', last_name:'', email:'', birth_date:'', bio:'', address: {street:'', city:'', state:'', zip_code:''}}); 
   const [user, setUser] = useState(null);
@@ -136,7 +135,7 @@ const ProfileCard = () => {
       address: formData.address,
       // profile_picture: formData.profile_picture
   };
-  
+
 //   const response = await updateUserProfile(updatedUser);
 //   if (response) {
 //     setUser(response);
@@ -240,6 +239,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
               <CustomTextField
                 label="Last Name"
@@ -248,6 +248,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
               <CustomTextField
                 label="Email"
@@ -256,6 +257,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
               <CustomTextField
                 name="birth_date"
@@ -264,6 +266,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
               <CustomTextField
                 label="Street"
@@ -272,6 +275,7 @@ const ProfileCard = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                edit={edit}
               />
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
@@ -282,6 +286,7 @@ const ProfileCard = () => {
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  edit={edit}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -293,6 +298,7 @@ const ProfileCard = () => {
                   select
                   fullWidth
                   margin="normal"
+                  edit={edit}
                 >
                   {states.map((state) => (
                     <MenuItem key={state.abbreviation} value={state.abbreviation}>
@@ -309,6 +315,7 @@ const ProfileCard = () => {
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  edit={edit}
                 />
               </Grid>
             </Grid>
@@ -320,6 +327,7 @@ const ProfileCard = () => {
                 fullWidth
                 margin="normal"
                 multiline
+                edit={edit}
               />
               {/* <input
                 type="file"

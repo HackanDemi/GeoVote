@@ -11,8 +11,13 @@ const textFieldStyles = {
     },
 };
 
-const CustomTextField = (props) => {
-    return <TextField {...props} sx={textFieldStyles} />;
+const editInputStyles = {
+    backgroundColor: '#595966', 
 };
 
-export default CustomTextField
+const CustomTextField = ({ edit, ...props }) => {
+    const combinedStyles = edit ? { ...textFieldStyles, ...editInputStyles } : textFieldStyles;
+    return <TextField {...props} sx={combinedStyles} />;
+};
+
+export default CustomTextField;

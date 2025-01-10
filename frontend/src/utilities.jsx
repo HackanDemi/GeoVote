@@ -157,7 +157,7 @@ export const createPoll = async(pollData) =>  {
 
 
 
-export const getPolls = async() => {
+export const getAllPolls = async() => {
   const token = localStorage.getItem('token')
 
   if(token){
@@ -185,16 +185,27 @@ export const updatePoll = async (formData) => {
 };
 
 
-export const deletePoll = async(pollId) =>{
+export const deletePoll = async (pollId) => {
   try {
-      const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-      if (token) {
-        api.defaults.headers.common['Authorization'] = `Token ${token}`;
-        const { data } = await api.delete(`poll/${pollId}/`);
-        return data;
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      const response = await api.post('polls/delete/', { poll_id: pollId }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        console.error('Error deleting poll:', response.data);
+        return null;
       }
-    } catch (err) {
-      console.error('Error deleting poll:', err.message);
     }
-}
+  } catch (err) {
+    console.error('Error deleting poll:', err.message);
+    return null;
+  }
+};

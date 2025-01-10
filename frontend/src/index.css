@@ -129,30 +129,9 @@
     margin: 0;
     padding: 0;
     width: 100%;
+    height: 100%;
   }
   
-  .profile-card-container {
-    margin-top: 20px;
-    background-color: #1e1e2f; 
-    box-shadow: 0 4px 20px rgba(128, 90, 213, 0.8);
-    padding: 20px;
-    border-radius: 15px;
-    width: 100vw;
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-  
-  .profile-card .card-content {
-    background-color: #1e1e2f; 
-    color: #d1d1d1;
-    border-radius: 10px;
-    padding: 20px;
-    font-family: "Arial", sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
-  }
   
   .profile-card .MuiTypography-root {
     color: #000000; 
@@ -206,14 +185,6 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 
-.poll-card-container {
-  margin-top: 20px;
-  background-color: #1e1e2f; 
-  box-shadow: 0 4px 20px rgba(128, 90, 213, 0.8);
-  padding: 20px;
-  border-radius: 15px;
-  width: 100vw;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
+.your-polls {
+  text-align: center;
 }
