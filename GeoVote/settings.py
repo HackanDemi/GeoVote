@@ -14,16 +14,10 @@ from pathlib import Path
 from decouple import config
 import secrets
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
-
-def generate_secret_key():
-    return secrets.token_urlsafe(50)
-
-
-if __name__ == "__main__":
-    print(generate_secret_key())
+load_dotenv()
 
 GOOGLE_MAPS_API_KEY = config(
     "GOOGLE_MAPS_API_KEY",

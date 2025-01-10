@@ -22,7 +22,7 @@ from dotenv import load_dotenv  # Loads environment variables from .env file
 logger = logging.getLogger(__name__)
 
 gmaps = googlemaps.Client(
-    key=os.getenv("GOOGLE_MAPS_API")
+    key=os.getenv("GOOGLE_MAPS_API_KEY")
 )  # Initialized with the API key from the environment variables
 
 
