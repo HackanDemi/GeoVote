@@ -18,6 +18,7 @@ import random
 import googlemaps
 import os
 from dotenv import load_dotenv  # Loads environment variables from .env file
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +30,7 @@ gmaps = googlemaps.Client(
 class CreatePollView(APIView):
     def post(self, request):
         question = request.data.get("question")
-        identifier = request.data.get("identifier")
-        data = request.data.get("data")
         options = request.data.get("options", [])
-        city_id = request.data.get("city_id")
-        state_id = request.data.get("state_id")
-        publication_date = request.data.get("publication_date")
         address_id = request.data.get("address_id")
 
         if not question or len(options) < 2:
@@ -45,21 +41,11 @@ class CreatePollView(APIView):
 
         if not address_id:
             return Response(
-                {"error": "Address ID is required."}, status=HTTP_400_BAD_REQUEST
+                {"error": "Address is required."}, status=HTTP_400_BAD_REQUEST
             )
-
-        # Get the address from the Address model
-        try:
-            address_obj = Address.objects.get(id=address_id)
-        except Address.DoesNotExist:
-            return Response(
-                {"error": "Address not found."}, status=HTTP_400_BAD_REQUEST
-            )
-
-        full_address = f"{address_obj.street}, {address_obj.city}, {address_obj.state} {address_obj.zip_code}"
 
         geocode_result = gmaps.geocode(
-            full_address
+            address_id
         )  # Sends a request to the Google Maps Geocoding API to get lat/lng of the address
         if not geocode_result:
             return Response(
@@ -69,12 +55,10 @@ class CreatePollView(APIView):
         location = geocode_result[0]["geometry"]["location"]
         latitude = location["lat"]
         longitude = location["lng"]
-        # Lat/lng are extraced from the response and included in the payload sent to the Polls API
+        # Lat/lng are extracted from the response and included in the payload sent to the Polls API
 
         payload = {
             "question": question,
-            "identifier": identifier,
-            "data": data,
             "options": options,
         }
         api_url = "https://api.pollsapi.com/v1/create/poll"
@@ -85,11 +69,12 @@ class CreatePollView(APIView):
         try:
             response = requests.post(api_url, json=payload, headers=headers)
             if response.status_code == 201:
+                publication_date = (
+                    timezone.now()
+                )  # Will set the publication_date to the user's current date/time in zulu time
                 question = Question.objects.create(
                     question_text=question,
                     publication_date=publication_date,
-                    city_id=city_id,
-                    state_id=state_id,
                     latitude=latitude,
                     longitude=longitude,
                 )
@@ -121,16 +106,7 @@ class AllPollsView(APIView):
     3. Update the user's session with a new poll"""
 
     def get(self, request):
-        try:
-            offset = int(request.query_params.get("offset", 0))
-            limit = int(request.query_params.get("limit", 25))
-        except ValueError:
-            return Response(
-                {"error": "Invalid 'offset' or 'limit' value."},
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        api_url = f"https://api.pollsapi.com/v1/get/polls?offset={offset}&limit={limit}"
+        api_url = f"https://api.pollsapi.com/v1/get/polls/"
         headers = {
             "api-key": settings.POLLS_API_KEY,
         }
@@ -139,6 +115,7 @@ class AllPollsView(APIView):
             response = requests.get(api_url, headers=headers)
             if response.status_code == 200:
                 try:
+
                     return Response(response.json(), status=HTTP_200_OK)
                 except ValueError:
                     return Response(
@@ -158,11 +135,44 @@ class AllPollsView(APIView):
                     status=response.status_code,
                 )
         except requests.exceptions.RequestException as e:
-            logger.error("Polls API request failed: %s", e)
+            logger.error("Polls API request failed: {e}")
             return Response(
                 {"error": "An error occured connecting to Polls API."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class RandomPollView(APIView):
+    def get(self, request):
+        api_url = "https://api.pollsapi.com/v1/get/polls/"
+        headers = {
+            "api-key": settings.POLLS_API_KEY,
+        }
+
+        try:
+            response = requests.get(api_url, headers=headers)
+            response.raise_for_status()
+            all_polls = response.json().get("data", {}).get("docs", [])
+
+            if not all_polls:  # Checks for an empty list
+                return Response({"error": "No polls available."}, status=HTTP_200_OK)
+
+            random_poll = random.choice(
+                all_polls
+            )  # Selects a random poll from the list of polls
+            poll_data = {  # Poll data is prepared in a dictionary format
+                "id": random_poll.get("id"),
+                "question_text": random_poll.get("question"),
+                "options": [
+                    option.get("text") for option in random_poll.get("options", [])
+                ],
+                "publication_date": random_poll.get("publication_date"),
+                "latitude": random_poll.get("latitude"),
+                "longitude": random_poll.get("longitude"),
+            }
+            return Response(poll_data, status=HTTP_200_OK)
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class NextQuestionView(APIView):
