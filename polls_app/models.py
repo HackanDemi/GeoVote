@@ -5,6 +5,8 @@ from region_app.models import City, State
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     publication_date = models.DateTimeField("date published")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
