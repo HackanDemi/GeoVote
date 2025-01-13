@@ -10,7 +10,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
 )
 from django.conf import settings
-from .models import Question, Choice
+from .models import Question, Choice, Vote
 from .serializer import PollSerializer
 from geopy.geocoders import Nominatim
 from profile_app.models import Address  # Imports the address class
@@ -19,6 +19,7 @@ import googlemaps
 import os
 from dotenv import load_dotenv  # Loads environment variables from .env file
 from django.utils import timezone
+from django.db.models import Count
 
 logger = logging.getLogger(__name__)
 
@@ -147,35 +148,25 @@ class AllPollsView(APIView):
 
 class RandomPollView(APIView):
     def get(self, request):
-        api_url = "https://api.pollsapi.com/v1/get/polls/"
-        headers = {
-            "api-key": settings.POLLS_API_KEY,
+        questions = Question.objects.all()
+        if not questions:
+            return Response({"error": "No polls available."}, status=HTTP_200_OK)
+
+        random_poll = random.choice(questions)
+        options = [
+            {"id": choice.id, "text": choice.choice_text}
+            for choice in random_poll.choice_set.all()
+        ]
+
+        poll_data = {
+            "id": str(random_poll.id),
+            "question_text": random_poll.question_text,
+            "options": options,
+            "publication_date": random_poll.publication_date,
+            "latitude": random_poll.latitude,
+            "longitude": random_poll.longitude,
         }
-
-        try:
-            response = requests.get(api_url, headers=headers)
-            response.raise_for_status()
-            all_polls = response.json().get("data", {}).get("docs", [])
-
-            if not all_polls:  # Checks for an empty list
-                return Response({"error": "No polls available."}, status=HTTP_200_OK)
-
-            random_poll = random.choice(
-                all_polls
-            )  # Selects a random poll from the list of polls
-            poll_data = {  # Poll data is prepared in a dictionary format
-                "id": random_poll.get("id"),
-                "question_text": random_poll.get("question"),
-                "options": [
-                    option.get("text") for option in random_poll.get("options", [])
-                ],
-                "publication_date": random_poll.get("publication_date"),
-                "latitude": random_poll.get("latitude"),
-                "longitude": random_poll.get("longitude"),
-            }
-            return Response(poll_data, status=HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(poll_data, HTTP_200_OK)
 
 
 class NextQuestionView(APIView):
@@ -214,50 +205,22 @@ class NextQuestionView(APIView):
 
 # import profile model
 class GetAllVotes(APIView):
-    def get(self, request):
-        try:
-            poll_id = request.query_params.get("poll_id")
-            offset = int(request.query_params.get("offset", 0))
-            limit = min(
-                int(request.query_params.get("limit", 25)), 100
-            )  # The API is limited to 100
-        except ValueError:
-            return Response(
-                {"error": "Invalid 'offset' or 'limit' value."},
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        if not poll_id:  # Makes sure the request has the poll ID
-            return Response(
-                {"error": "Poll ID is required."}, status=HTTP_400_BAD_REQUEST
-            )
-
-        api_url = f"https://api.pollsapi.com/v1/get/votes/{poll_id}?offset={offset}&limit={limit}"  # If a limit is not chosen, then 25 is the default
-        headers = {
-            "api-key": settings.POLLS_API_KEY,
-        }
-
-        try:
-            response = requests.get(api_url, headers=headers)
-            response.raise_for_status()
-            votes_data = response.json().get("data", {}).get("docs", [])
-            print(f"Fetched votes: {votes_data}")  # For debugging, take out later
-
-            option_votes = {}
-            for vote in votes_data:
-                option_id = vote.get("option_id")
-                if option_id in option_votes:
-                    option_votes[option_id] += 1
-                else:
-                    option_votes[option_id] = 1
-
-            return Response({"votes": option_votes}, status=HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")  # For debugging, delete later
-            return Response(
-                {"error": "An error occured connecting to Polls API."},
-                status=HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+    def get(self, request, question_id):
+        votes = (
+            Vote.objects.filter(question_id=question_id)
+            .values("choice__choice_text")
+            .annotate(total_votes=Count("id"))
+        )
+        results = [
+            {
+                "choice_text": vote["choice__choice_text"],
+                "total_votes": vote["total_votes"],
+            }
+            for vote in votes
+        ]
+        return Response(
+            {"question_id": question_id, "results": results}, status=HTTP_200_OK
+        )
 
 
 class DeletePoll(APIView):
@@ -300,3 +263,26 @@ class DeletePoll(APIView):
                 },
                 status=HTTP_400_BAD_REQUEST,
             )
+
+
+class VoteOnChoice(APIView):
+    def post(self, request):
+        question_id = request.data.get("question_id")
+        choice_id = request.data.get("choice_id")
+
+        if not question_id or not choice_id:
+            return Response(
+                {"error": "A question_id and choice_id are required."},
+                HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            question = Question.objects.get(id=question_id)
+            choice = Choice.objects.get(id=choice_id, question=question)
+        except (Question.DoesNotExist, Choice.DoesNotExist):
+            return Response(
+                {"error": "Invalid question or choice ID."}, status=HTTP_404_NOT_FOUND
+            )
+
+        Vote.objects.create(choice=choice, question=question)
+        return Response({"message": "Vote recorded."}, status=HTTP_201_CREATED)

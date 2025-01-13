@@ -4,9 +4,7 @@ from region_app.models import City, State
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
-    publication_date = models.DateTimeField("date published")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
+    publication_date = models.DateTimeField(auto_now_add=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
@@ -21,3 +19,9 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
+
+class Vote(models.Model):
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
