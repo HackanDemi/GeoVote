@@ -68,19 +68,22 @@ class CreatePollView(APIView):
         }
         try:
             response = requests.post(api_url, json=payload, headers=headers)
-            if response.status_code == 201:
+            if response.status_code in [HTTP_200_OK, HTTP_201_CREATED]:
                 publication_date = (
                     timezone.now()
                 )  # Will set the publication_date to the user's current date/time in zulu time
+                poll_data = response.json().get("data", {})
                 question = Question.objects.create(
-                    question_text=question,
+                    question_text=poll_data.get("question"),  # Changed from "question"
                     publication_date=publication_date,
                     latitude=latitude,
                     longitude=longitude,
                 )
-                for option in options:
-                    Choice.objects.create(question=question, choice_test=option)
-                return Response(response.json(), status=HTTP_201_CREATED)
+                for option in poll_data.get("options", []):
+                    Choice.objects.create(
+                        question=question, choice_text=option.get("text")
+                    )
+                return Response(poll_data, status=HTTP_201_CREATED)
             else:
                 return Response(
                     {
