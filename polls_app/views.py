@@ -218,41 +218,42 @@ class GetAllVotes(APIView):
         try:
             poll_id = request.query_params.get("poll_id")
             offset = int(request.query_params.get("offset", 0))
-            limit = min(request.query_params.get("limit", 25))
+            limit = min(
+                int(request.query_params.get("limit", 25)), 100
+            )  # The API is limited to 100
         except ValueError:
             return Response(
                 {"error": "Invalid 'offset' or 'limit' value."},
                 status=HTTP_400_BAD_REQUEST,
             )
 
-        api_url = f"https://api.pollsapi.com/v1/get/votes/{poll_id}?offset={offset}&limit={limit}"
+        if not poll_id:  # Makes sure the request has the poll ID
+            return Response(
+                {"error": "Poll ID is required."}, status=HTTP_400_BAD_REQUEST
+            )
+
+        api_url = f"https://api.pollsapi.com/v1/get/votes/{poll_id}?offset={offset}&limit={limit}"  # If a limit is not chosen, then 25 is the default
         headers = {
             "api-key": settings.POLLS_API_KEY,
         }
 
         try:
             response = requests.get(api_url, headers=headers)
-            if response.status_code == 200:
-                try:
-                    return Response(response.json(), status=HTTP_200_OK)
-                except ValueError:
-                    return Response(
-                        {"error": "Invalid response from Polls API."},
-                        status=HTTP_500_INTERNAL_SERVER_ERROR,
-                    )
-            else:
-                try:
-                    error_details = response.json()
-                except ValueError:
-                    error_details = {"error": "Invalid response from Polls API."}
-                return Response(
-                    {
-                        "error": "Failed to fetch polls.",
-                        "details": error_details,
-                    },
-                    status=response.status_code,
-                )
+            response.raise_for_status()
+            votes_data = response.json().get("data", {}).get("docs", [])
+            print(f"Fetched votes: {votes_data}")  # For debugging, take out later
+
+            option_votes = {}
+            for vote in votes_data:
+                option_id = vote.get("option_id")
+                if option_id in option_votes:
+                    option_votes[option_id] += 1
+                else:
+                    option_votes[option_id] = 1
+
+            return Response({"votes": option_votes}, status=HTTP_200_OK)
         except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")  # For debugging, delete later
             return Response(
                 {"error": "An error occured connecting to Polls API."},
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
