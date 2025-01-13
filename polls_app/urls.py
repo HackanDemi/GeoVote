@@ -6,6 +6,7 @@ from .views import (
     DeletePoll,
     NextQuestionView,
     RandomPollView,
+    VoteOnChoice,
 )
 
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
     path("all/", AllPollsView.as_view(), name="all_polls"),
     path("random/", RandomPollView.as_view(), name="random_poll"),
     path("polls/next", NextQuestionView.as_view(), name="next_question"),
-    path("votes/", GetAllVotes.as_view(), name="get_all_votes"),
+    path("votes/<int:question_id>/", GetAllVotes.as_view(), name="get_all_votes"),
     path("delete/", DeletePoll.as_view(), name="delete_poll"),
+    path("vote-on-choice/", VoteOnChoice.as_view(), name="vote_on_choice"),
 ]
