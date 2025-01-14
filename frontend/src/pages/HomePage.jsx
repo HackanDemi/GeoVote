@@ -1,4 +1,3 @@
-import React from 'react'
 import NavBar from '../components/NavBar'
 import Map from '../components/MapTiler/MapTiler'
 
@@ -12,4 +11,4 @@ export default function HomePage() {
   )
 }
 
-// Have the home page render the MapTiler component
+// Have the home page render the MapTiler component? 
