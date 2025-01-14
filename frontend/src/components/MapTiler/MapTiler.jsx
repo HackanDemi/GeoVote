@@ -1,61 +1,32 @@
-import { useRef, useEffect } from "react";
-import * as maptilersdk from "@maptiler/sdk";
-import "@maptiler/sdk/dist/maptiler-sdk.css";
+import React from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import HeatmapLayer from "./HeatmapLayer";
 import "./MapTiler.css";
 
-export default function Map() {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const usa = { lng: -118.24, lat: 40.71 };
-  const zoom = 14;
-  maptilersdk.config.apiKey = "mMj39F7ThXzLvZNBLlgW";
-
-  useEffect(() => {
-    if (map.current) return; // stops map from intializing more than once
-
-    map.current = new maptilersdk.Map({
-      container: mapContainer.current,
-      style: maptilersdk.MapStyle.STREETS,
-      center: [usa.lng, usa.lat],
-      zoom: zoom,
-    });
-  }, [usa.lng, usa.lat, zoom]);
+const Map = () => {
+  const center = [40.73, -73.935]; // lat, lng
+  const zoom = 12;
+  // const mockVoteData = [
+  //   { city: "New York", votes: 35, lat: 40.7128, lng: -74.006 },
+  //   { city: "Los Angeles", votes: 25, lat: 34.0522, lng: -118.2437 },
+  //   { city: "Chicago", votes: 15, lat: 41.8781, lng: -87.6298 },
+  //   { city: "Houston", votes: 5, lat: 29.7604, lng: -95.3698 },
+  //   { votes: 20, lat: 33.4484, lng: -112.074 },
+  // ];
+  
+  // data={mockVoteData}
+  
   return (
-    <div className="map-wrap">
-      <div ref={mapContainer} className="map" />
-    </div>
+    <MapContainer center={center} zoom={zoom} style={{ height: "100vh" }}>
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <HeatmapLayer />
+    </MapContainer>
   );
-}
+};
 
-// import React, { useEffect, useRef } from 'react';
-// import maptiler from '@maptiler/sdk';
-// import axios from 'axios';
-// import './MapTiler.css';
+export default Map;
 
-// export default function MapTiler() {
-//     const mapContainerRef = useRef(null);
-
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             const apiKey = process.env.REACT_APP_MAPTILER_API_KEY;
-//             const response = await axios.get(`https://api.maptiler.com/maps/basic-v2/style.json?key=${apiKey}`);
-//             console.log(response.data);
-
-//             const map = new maptiler.Map({
-//                 container: mapContainerRef.current,
-//                 style: response.data,
-//                 center: [0, 0],
-//                 zoom: 2,
-//                 key: apiKey,
-//             });
-//         };
-
-//         fetchData();
-//     }, []);
-
-//     return (
-//         <div className="map-container">
-//             <div ref={mapContainerRef} className="map"></div>
-//         </div>
-//     );
-// }
