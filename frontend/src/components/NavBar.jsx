@@ -11,7 +11,7 @@ import { logOut } from '../utilities';
 const pages = [
   { name: 'Home', path: '/home' },
   { name: 'Map', path: '/map' },
-  { name: 'Poll', path: '/poll' },
+  { name: 'Poll', path: '/pollcreateoranswer' },
 ];
 const settings = [
   { name: 'Profile', path: '/profile' },
