@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardActions, Button, TextField, Typography, Box } from '@mui/material';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
-import './PollCreateOrAnswer.css';
+import './PollCreateOrAnswerPage.css';
 
 const PollCreateOrAnswer = () => {
   const [question, setQuestion] = useState('');
