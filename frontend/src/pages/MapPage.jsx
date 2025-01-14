@@ -1,19 +1,23 @@
-import React from 'react'
 import NavBar from '../components/NavBar'
 import MapTiler from '../components/MapTiler/MapTiler'
+import './MapPage.css'
 
 export default function MapPage() {
   return (
     <>
-    <NavBar />
-    <div>
-  Legend: 
-  <img src="path/to/yellow-box.png" alt="Yellow color box" /> 10{'>='} 
-  <img src="path/to/orange-box.png" alt="Orange color box" /> 20{'>='} 
-  <img src="path/to/red-box.png" alt="Red color box" /> 30{'>='} 
-    </div>
-    <MapTiler />
+      <NavBar />
+      <div className="map-container">
+        <div className="overlay">
+        <MapTiler />
+          
+          <div id="map" className="map-below"></div>
+          <div className="colors">
+            <div className="changeColor changeColor-red" data-color="red"><span className="yellow-text">10 {'>='} Votes</span></div>
+            <div className="changeColor changeColor-blue" data-color="blue"><span className="orange-text">20 {'>='} Votes</span></div>
+            <div className="changeColor changeColor-green" data-color="green"><span className="red-text">30 {'>='} Votes</span></div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
-

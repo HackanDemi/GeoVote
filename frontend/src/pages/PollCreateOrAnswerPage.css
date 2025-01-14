@@ -1,0 +1,32 @@
+.poll-create-or-answer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+  background-color: transparent; /* Ensure the container is transparent */
+}
+
+.answer-polls-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.poll-card {
+  background-color: transparent !important; /* Ensure the card is transparent */
+  box-shadow: none; /* Remove any box shadow if present */
+}
+
+.MuiOutlinedInput-root {
+  background-color: #495057;
+  color: white;
+}
+
+.MuiOutlinedInput-root .MuiOutlinedInput-input {
+  color: white;
+}
+
+.MuiInputLabel-outlined {
+  color: white;
+}

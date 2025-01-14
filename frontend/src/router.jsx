@@ -8,6 +8,7 @@ import PollPage from './pages/PollPage';
 import ProfilePage from './pages/ProfilePage';
 import MapPage from './pages/MapPage';
 import ErrorPage from './pages/ErrorPage';
+import PollCreateOrAnswer from './pages/PollCreateOrAnswerPage';
 
 const router = createBrowserRouter([
     {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
             {
                 path: 'poll/',
                 element: <PollPage/>
+            },  
+            {
+                path: 'pollcreateoranswer/',
+                element: <PollCreateOrAnswer/>
             },
             {
                 path: 'profile/',
