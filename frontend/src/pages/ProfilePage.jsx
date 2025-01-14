@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
-import PollCar from '../components/PollsCard';
+import PollCard from '../components/PollsCard';
 import ProfileCard from '../components/ProfileCard';
 import { getAllPolls, deletePoll } from '../utilities';
 
