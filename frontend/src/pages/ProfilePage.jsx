@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar'
 import PollCard from '../components/PollsCard';
 import ProfileCard from '../components/ProfileCard';
-import { getAllPolls, deletePoll } from '../utilities';
+import { getUserPolls, deletePoll } from '../utilities';
 
 const textStyles = {
   color: "text.primary",
@@ -15,9 +15,10 @@ const textStyles = {
 const ProfilePage = () => {
   const [polls, setPolls] = useState([]);
 
+
   useEffect(() => {
     const getPolls = async() => {
-      const usersPolls = await getAllPolls();
+      const usersPolls = await getUserPolls();
       if (usersPolls) {
         setPolls(usersPolls);
       }
@@ -37,18 +38,22 @@ const ProfilePage = () => {
 
     return (
       <>
-    <NavBar />
+      <NavBar />
       <div style={{ width: '100vw' }}>
-      <ProfileCard/>
-      <div className='your-polls' style={textStyles}>Your Polls:</div>
-      {polls.map(poll => (
-        <PollCard 
-          key={poll.id}
-          readOnly 
-          onDelete={() => handleDeletePoll(poll.id)}/>
-      ))}
+        <ProfileCard />
+        <div className='your-polls' style={textStyles}>Your Polls:</div>
+        {polls.length > 0 ? (
+          polls.map(poll => (
+            <PollCard
+              key={poll.id}
+              readOnly
+              onDelete={() => handleDeletePoll(poll.id)}
+            />
+          ))
+        ) : (
+          <div>You haven't created any polls yet!</div>
+        )}
       </div>
-
     </>
     )
   };

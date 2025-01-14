@@ -14,6 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import User
+from profile_app.models import Profile
 from django.db import IntegrityError
 
 
@@ -49,6 +50,10 @@ class SignUp(APIView):
                 last_name=body_data["last_name"],
             )
             token = Token.objects.create(user=new_user)
+            
+            # Create a Profile object for the new user
+            Profile.objects.create(user=new_user)
+            
             return Response({"user": new_user.email, "token": token.key, "first_name": new_user.first_name, "last_name": new_user.last_name}, status=HTTP_201_CREATED)
         except ValueError as e:
             return Response(f"Value error: {e}", status=HTTP_400_BAD_REQUEST)

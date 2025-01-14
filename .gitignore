@@ -16,3 +16,5 @@ dist/
 *.log
 .idea/
 .vscode/
+geovoteenv
+/migrations/

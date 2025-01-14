@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar'
 // import PizzaPoll from '../components/PizzaPoll'
 import PollCard from '../components/PollsCard';
-import { getAllPolls } from '../utilities';
+import { getUserPolls } from '../utilities';
 
 export default function PollPage() {
   const [polls, setPolls] = useState([]);
 
   useEffect(() => {
     const getPolls = async() => {
-      const usersPolls = await getAllPolls();
+      const usersPolls = await getUserPolls();
       if(usersPolls) {
         setPolls(usersPolls);
       }

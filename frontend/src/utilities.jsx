@@ -38,12 +38,10 @@ export const userRegistration = async (formData) => {
 
 export const logIn = async (formData) => {
   const { email, password } = formData; 
-  let response = await api.post('users/login/',
-    {
-      email: email, 
-      password: password,
-      }
-  );
+  let response = await api.post('users/login/', {
+    email: email, 
+    password: password,
+  });
 
   if (response.status === 200) {
     const { token, user } = response.data; 
@@ -52,8 +50,8 @@ export const logIn = async (formData) => {
     api.defaults.headers.common['Authorization'] = `Token ${token}`; 
     return user; 
   }
-    console.log(response.data)
-    return null
+  console.log(response.data)
+  return null
 };
 
 
@@ -82,10 +80,10 @@ export const logOut = async(user) => {
 };
 
 
-export const getInfo = async() => {
-  let token = localStorage.getItem('token');
+export const getInfo = async () => {
+  const token = localStorage.getItem('token');
   if (!token) {
-    console.log('Token not found in localStorage')
+    console.log('Token not found in localStorage');
     return null;
   }
 
@@ -93,34 +91,55 @@ export const getInfo = async() => {
 
   try {
     const userResponse = await api.get('users/info/');
-    const userData = userResponse.data;
-      try {
-        const profileResponse = await api.get("profile/");
-        return {
-          ...userData, 
-          profile: profileResponse.data,
-        };
-      } catch (profileErr) {
-        console.error('Profile fetch error:', profileErr.response?.status, profileErr.message);
-        
-        if (profileErr.response?.status === 500) {
-          console.warn("Server error fetching profile. Address may not exist.");
-          return{
-            ...userData,
-            profile: null,
-          };
-        }
-        throw profileErr;
-      }
+    console.log('User response:', userResponse.data); 
+    return userResponse.data;
   } catch (err) {
-    console.error('err fetching user info:', err.message);
-    if (err.response && err.response.status === 401) {
-      localStorage.removeItem('token');
-    }
+    console.error('Error fetching user info:', err.message);
     return null;
   }
 };
 
+export const getProfile = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.log('Token not found in localStorage');
+    return null;
+  }
+
+  api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+  try {
+    const profileResponse = await api.get('profile/');
+    console.log('Profile response:', profileResponse.data); 
+    return profileResponse.data;
+  } catch (err) {
+    console.error('Error fetching profile info:', err.message);
+    return null;
+  }
+};
+
+export const updateProfile = async (profileData) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.log('Token not found in localStorage');
+    return null;
+  }
+
+  api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+  try {
+    const response = await api.put('profile/', profileData);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error('Profile update failed with status:', response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error.message);
+    return null;
+  }
+};
 
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -144,19 +163,26 @@ export const createPoll = async(pollData) =>  {
 
 
 
-export const getAllPolls = async () => {
+export const getUserPolls = async () => {
   try {
-    const response = await api.get("polls/all/");
+    const token = localStorage.getItem('token');
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      console.log('Token set in headers:', token);
+    } else {
+      throw new Error('No token found');
+    }
+    const response = await api.get("polls/user-polls/");
+    console.log('Response:', response);
     if (response.status === 200) {
       return response.data;
     }
     return null;
   } catch (err) {
-    console.error('err fetching polls:', err.message);
+    console.error('Error fetching user polls:', err.message, err.response);
     return null;
   }
 };
-
 
 export const updatePoll = async (formData) => {
   const { pollId } = formData

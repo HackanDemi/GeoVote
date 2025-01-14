@@ -1,6 +1,6 @@
 import { Card, CardActions, CardContent, Button, Container, Grid, MenuItem, ThemeProvider, createTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getInfo } from '../utilities'; //  , updateUserProfile
+import { getInfo, updateProfile, getProfile } from '../utilities';
 import CustomTextField from './CustomText';
 
 
@@ -16,24 +16,15 @@ import CustomTextField from './CustomText';
     }
   });
 
-  const STYLES = {
-    cardContainer: {
-      bgcolor: 'background.paper',
-      borderRadius: '15px',
-      boxShadow: '0 4px 20px rgba(128, 90, 213, 0.8)',
-      margin: '20px auto',
-      padding: '20px',
-    },
-    name: {
-      color: 'text.primary',
-      fontSize: '32px',
-      fontWeight: 'bold',
-      marginBottom: '8px',
-    },
-    text: {
-      color: 'text.primary',
-      marginBottom: '8px',
-    },
+  const textStyles = {
+    color: "text.primary",
+    marginBottom: "8px",
+  };
+
+  const nameStyles = {
+    ...textStyles,
+    fontSize: "32px", 
+    fontWeight: "bold",
   };
 
 const ProfileCard = () => {
@@ -106,57 +97,91 @@ const ProfileCard = () => {
 
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
-    setFormData((prevData) =>
-      name in prevData.address
-        ? {
-            ...prevData,
-            address: { ...prevData.address, [name]: value },
-          }
-        : { ...prevData, [name]: value }
-    );
+    if (name in formData.address) {
+      setFormData((prevData) => ({
+        ...prevData,
+        address: { ...prevData.address, [name]: value } 
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
-  const toggleEdit = () => setEdit((prev) => !prev);
 
-  const handleSave = () => {
-    const updatedUser = { ...formData };
-    localStorage.setItem(formData.email, JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    setFormData(updatedUser);
-    toggleEdit();
+  const toggleEdit = () => {
+    setEdit(!edit);
+  };
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const userInfo = await getInfo();
+      const profileInfo = await getProfile();
+      if (userInfo && profileInfo) {
+        setFormData({
+          first_name: userInfo.first_name || '',
+          last_name: userInfo.last_name || '',
+          email: userInfo.email || '',
+          birth_date: profileInfo.birth_date || '',
+          bio: profileInfo.bio || '',
+          address: profileInfo.address || {
+            street: '',
+            city: '',
+            state: '',
+            zip_code: ''
+          }
+        });
+        setUser(userInfo);
+      } else {
+        console.error('Invalid user info structure:', userInfo, profileInfo);
+      }
+    };
+    getUserData();
+  }, []);
+
+
+  const handleSave = async () => {
+    const updatedUser = {
+      user: {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+      },
+      profile: {
+        birth_date: formData.birth_date,
+        bio: formData.bio,
+      },
+      address: formData.address,
+    };
+
+    console.log('Saving to localStorage:', updatedUser);
+
+    const response = await updateProfile(updatedUser);
+    if (response) {
+      console.log('Profile updated successfully:', response);
+      localStorage.setItem('user', JSON.stringify({ ...user, ...updatedUser.user }));
+      setUser({ ...user, ...updatedUser.user });
+      setFormData({
+        first_name: response.user.first_name,
+        last_name: response.user.last_name,
+        email: response.user.email,
+        birth_date: response.profile.birth_date,
+        bio: response.profile.bio,
+        address: response.address
+      });
+      toggleEdit();
+      console.log('Updated user profile:', updatedUser);
+      console.log("User:", user);
+    } else {
+      console.error('Failed to update profile');
+    }
   };
 
   const handleCancel = () => {
     setFormData({...formData});
     toggleEdit();
-  }
+  };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userEmail = formData.email;
-      const savedUser = localStorage.getItem(userEmail);
 
-      if (savedUser) {
-        setFormData(JSON.parse(savedUser));
-      } else {
-        const userInfo = await getInfo();
-        if (userInfo) {
-          setUser(userInfo);
-          setFormData({
-            ...userInfo,
-            address: {
-              ...userInfo.address,
-              street: userInfo.address?.street || '',
-              city: userInfo.address?.city || '',
-              state: userInfo.address?.state || '',
-              zip_code: userInfo.address?.zip_code || '',
-            },
-          });
-        }
-      }
-    };
-    fetchUserData();
-  }, [formData.email]);
 
 
 
@@ -164,7 +189,14 @@ const ProfileCard = () => {
     <>
     <ThemeProvider theme={theme}>
     <Container className='profile-card-container' disableGutters>
-      <Card sx={STYLES.cardContainer}>
+      <Card className='profile-card'
+        sx={{
+          bgcolor: 'background.paper', 
+          borderRadius: "15px",
+          boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+          margin: "20px auto",
+          padding: "20px",
+        }}>
         <CardContent className='card-content'>
           {edit ? (
             <>
@@ -265,42 +297,22 @@ const ProfileCard = () => {
                 multiline
                 edit={edit}
               />
-              {/* <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              {formData.profile_picture && (
-                <img
-                  src={formData.profile_picture}
-                  alt="Profile"
-                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginTop: '10px' }}
-                />
-              )} */}
-
             </>
           ) : (
             <>
-              {/* {formData.profile_picture && (
-                <img
-                  src={formData.profile_picture}
-                  alt="Profile"
-                  style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px' }}
-                />
-              )} */}
-                <div style={STYLES.name}>
+                <div style={nameStyles}>
                   {formData.first_name} {formData.last_name}
                 </div>
-                <div style={STYLES.text}>
+                <div style={textStyles}>
                   {formData.email}
                 </div>
-                <div style={STYLES.text}>
+                <div style={textStyles}>
                   {formData.birth_date}
                 </div>
-                <div style={STYLES.text}>
-                  {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
+                <div style={textStyles}>
+                {`${formData.address?.street || ''} ${formData.address?.city || ''}${formData.address?.city && formData.address?.state ? ', ' : ''}${formData.address?.state || ''}${formData.address?.state && formData.address?.zip_code ? ', ' : ''}${formData.address?.zip_code || ''}`}
                 </div>
-                <div style={STYLES.text}>
+                <div style={textStyles}>
                   {formData.bio}
                 </div>
               </>
@@ -321,7 +333,7 @@ const ProfileCard = () => {
               Edit
             </Button>
           )}
-          
+
         </CardActions>
       </Card>
     </Container>
@@ -331,4 +343,3 @@ const ProfileCard = () => {
 }
 
 export default ProfileCard;
-

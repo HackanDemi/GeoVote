@@ -9,6 +9,8 @@ from rest_framework.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_404_NOT_FOUND,
 )
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from django.conf import settings
 from .models import Question, Choice, Vote
 from .serializer import PollSerializer
@@ -101,15 +103,22 @@ class CreatePollView(APIView):
                 status=HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-
+class CustomTokenAuthentication(TokenAuthentication):
+    def authenticate(self, request):
+        logger.info(f"Token: {request.headers.get('Authorization')}")
+        return super().authenticate(request)
+    
 class AllPollsView(APIView):
     """To get the AllPollsView to cycle throught the
     questions follow the steps below:
     1. Store shown questions in the user's session
     2. Fetch a random poll that hasn't been shown yet
     3. Update the user's session with a new poll"""
-
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
+        logger.info(f"User: {request.user}, Permissions: {request.user.get_all_permissions()}")
         api_url = f"https://api.pollsapi.com/v1/get/polls/"
         headers = {
             "api-key": settings.POLLS_API_KEY,
@@ -119,7 +128,6 @@ class AllPollsView(APIView):
             response = requests.get(api_url, headers=headers)
             if response.status_code == 200:
                 try:
-
                     return Response(response.json(), status=HTTP_200_OK)
                 except ValueError:
                     return Response(
@@ -139,11 +147,28 @@ class AllPollsView(APIView):
                     status=response.status_code,
                 )
         except requests.exceptions.RequestException as e:
-            logger.error("Polls API request failed: {e}")
+            logger.error(f"Polls API request failed: {e}")
             return Response(
-                {"error": "An error occured connecting to Polls API."},
-                status=HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+                {"error": "An error occurred connecting to Polls API."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR,)
+            
+
+
+class UserPollsView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        logger.info(f"User: {request.user}, Permissions: {request.user.get_all_permissions()}")
+        try:
+            polls = Question.objects.filter(user=request.user)
+            logger.info(f"Polls found: {polls}")
+            serializer = PollSerializer(polls, many=True)
+            return Response(serializer.data, status=HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error fetching polls: {e}")
+            return Response({"error": "An error occurred fetching polls."}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class RandomPollView(APIView):

@@ -13,6 +13,7 @@ from rest_framework.status import (
 )
 from .models import Profile, Address
 from .serializers import ProfileSerializer, AddressSerializer
+from user_app.serializers import UserSerializer
 from django.contrib.auth import get_user_model
 import googlemaps
 from datetime import datetime
@@ -31,53 +32,46 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
     
-    def get(self, request, pk=None):
-        print(f"Authenticated user: {request.user}")
+    def get(self, request):
         try:
-            if pk:
-                profile = Profile.objects.get(pk=pk, user=request.user)
-                address = Address.objects.filter(pk=profile.address.pk, user=request.user).first()
-            else:
-                profile = Profile.objects.get(user=request.user)
-                address = Address.objects.filter(user=request.user).first()
-            
-            if not address:
-                address = None
-                
+            profile = Profile.objects.get(user=request.user)
+            address = profile.address
             profile_serializer = ProfileSerializer(profile)
             address_serializer = AddressSerializer(address) if address else None
-            
+
             full_address = ''
-            
             if address:
                 full_address = f"{address.street}, {address.city}, {address.state} {address.zip_code}"
-            
+
             latitude = longitude = None
-            
             if full_address:
                 geocode_result = gmaps.geocode(full_address)
-            
                 if geocode_result:
                     latitude = geocode_result[0]['geometry']['location']['lat']
                     longitude = geocode_result[0]['geometry']['location']['lng']
-                    print(f"Latitude: {latitude}, Longitude: {longitude}")
-            
+
             coordinates = {
                 "latitude": latitude,
                 "longitude": longitude
             }
-                
+
+            user_data = {
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "email": request.user.email,
+            }
+
             return Response({
+                "user": user_data,
                 "profile": profile_serializer.data,
-                "address": address_serializer.data,
+                "address": address_serializer.data if address_serializer else None,
                 "coordinates": coordinates
             }, status=HTTP_200_OK)
-            
+
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
     
     def post(self, request):
-        print(f"Authenticated user: {request.user}")  # Debug statement
         profile_data = request.data.get("profile")
         address_data = request.data.get("address")
     
@@ -114,60 +108,54 @@ class ProfileView(APIView):
         }, status=HTTP_400_BAD_REQUEST)
         
     
-    def put(self, request, pk=None):
-        print(f"Authenticated user: {request.user}")  # Debug statement
-        
+    def put(self, request):
         try:
-            profile = Profile.objects.get(pk=pk, user=request.user)
-            address = Address.objects.filter(pk=profile.address.pk, user=request.user).first()
-            
-            if not address:
-                address = None
-                
+            profile = Profile.objects.get(user=request.user)
+            address = profile.address
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
-    
+
         profile_data = request.data.get("profile")
         address_data = request.data.get("address")
-    
+        user_data = request.data.get("user")
+
         profile_serializer = ProfileSerializer(profile, data=profile_data, partial=True)
         address_serializer = AddressSerializer(address, data=address_data, partial=True) if address_data else None
-    
-        if profile_serializer.is_valid() and (address_serializer is None or address_serializer.is_valid()):
+        user_serializer = UserSerializer(request.user, data=user_data, partial=True)
+
+        if profile_serializer.is_valid() and (address_serializer is None or address_serializer.is_valid()) and user_serializer.is_valid():
             if address_serializer:
-                address_instance = address_serializer.save()
+                address_instance = address_serializer.save(user=request.user)
                 profile_instance = profile_serializer.save(address=address_instance)
-                
+
                 full_address = f"{address_instance.street}, {address_instance.city}, {address_instance.state} {address_instance.zip_code}"
-                
                 geocode_result = gmaps.geocode(full_address)
                 if geocode_result:
                     latitude = geocode_result[0]['geometry']['location']['lat']
                     longitude = geocode_result[0]['geometry']['location']['lng']
-                    print(f"Latitude: {latitude}, Longitude: {longitude}")
             else:
                 profile_instance = profile_serializer.save()
                 latitude = None
                 longitude = None
-                
+
+            user_instance = user_serializer.save()
+
             return Response({
-                "profile": ProfileSerializer(profile).data,  # Ensure profile is serialized with updated address
-                "address": AddressSerializer(address_instance if address_serializer else address).data,
+                "user": UserSerializer(user_instance).data,
+                "profile": ProfileSerializer(profile_instance).data,  # Ensure profile_instance is used here
+                "address": AddressSerializer(address_instance if address_serializer else address).data if address else None,
                 "coordinates": {
                     "latitude": latitude,
                     "longitude": longitude
                 }
             }, status=HTTP_200_OK)
-    
-        # Debug statements to log errors
-        print(f"Profile errors: {profile_serializer.errors}")
-        if address_serializer:
-            print(f"Address errors: {address_serializer.errors}")
-    
+
         profile_errors = profile_serializer.errors if not profile_serializer.is_valid() else {}
         address_errors = address_serializer.errors if address_serializer and not address_serializer.is_valid() else {}
-    
+        user_errors = user_serializer.errors if not user_serializer.is_valid() else {}
+
         return Response({
             "profile_errors": profile_errors,
-            "address_errors": address_errors
+            "address_errors": address_errors,
+            "user_errors": user_errors
         }, status=HTTP_400_BAD_REQUEST)

@@ -1,8 +1,10 @@
 from django.db import models
 from region_app.models import City, State
+from user_app.models import User
 
 
 class Question(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     question_text = models.CharField(max_length=200)
     publication_date = models.DateTimeField(auto_now_add=True)
     latitude = models.FloatField(null=True, blank=True)
