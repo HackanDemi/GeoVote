@@ -1,0 +1,30 @@
+ .poll-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.poll-option {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #6c757d; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.poll-option:hover {
+  background-color: #adb5bd; 
+}
+
+.poll-option.selected {
+  background-color: #495057; 
+}
+
+
