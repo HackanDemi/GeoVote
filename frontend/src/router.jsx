@@ -9,7 +9,6 @@ import ProfilePage from './pages/ProfilePage';
 import MapPage from './pages/MapPage';
 import ErrorPage from './pages/ErrorPage';
 
-
 const router = createBrowserRouter([
     {
         path: "/", 

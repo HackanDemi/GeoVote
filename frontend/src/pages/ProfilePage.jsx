@@ -11,6 +11,7 @@ const textStyles = {
   fontWeight: "bold",
 };
 
+
 const ProfilePage = () => {
   const [polls, setPolls] = useState([]);
 
@@ -47,6 +48,7 @@ const ProfilePage = () => {
           onDelete={() => handleDeletePoll(poll.id)}/>
       ))}
       </div>
+
     </>
     )
   };

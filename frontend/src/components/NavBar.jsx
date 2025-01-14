@@ -6,6 +6,8 @@ import ReactImg from '../assets/croccat.png';
 import LogoImg from '../assets/GeoVote.png';
 import { logOut } from '../utilities';
 
+
+
 const pages = [
   { name: 'Home', path: '/home' },
   { name: 'Map', path: '/map' },
@@ -13,7 +15,7 @@ const pages = [
 ];
 const settings = [
   { name: 'Profile', path: '/profile' },
-  { name: 'Logout', path: '/login' },
+  { name: 'Logout', path: '/logout' },
 ];
 
 function NavBar() {
@@ -129,6 +131,7 @@ function NavBar() {
           <Mui.Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Mui.Button
+
                 key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: '#FFFFFF', display: 'block' }}
