@@ -32,9 +32,6 @@ const LogInForm = () => {
     };
   };
 
-  const handleLogInClick = () => {
-    navigate('/home');
-  }
 
   return (
     <>
@@ -60,14 +57,7 @@ const LogInForm = () => {
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => alert('Sign in with Google')}>
-            Sign in with Google
-          </Button>
-
-          <Button variant='outlined' onClick={handleLogInClick}>
+          <Button variant='outlined' onClick={handleSubmit}>
               Log In
             </Button>
 

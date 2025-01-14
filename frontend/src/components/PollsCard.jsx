@@ -54,7 +54,7 @@ const PollCard = ({ readOnly, edit, onDelete }) => {
           </div>
         </CardContent>
         <CardActions>
-          {editable && (
+          {edit && (
             <Button size="small">Edit</Button>
           )}
           {readOnly && (

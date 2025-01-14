@@ -80,11 +80,6 @@ const SignUpForm = () => {
           
           <br></br>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Button
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}>
-                Sign up with Google
-          </Button>
           <Button type='submit'
             variant='outlined'>
               Sign Up
