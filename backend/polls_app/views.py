@@ -23,6 +23,7 @@ from dotenv import load_dotenv  # Loads environment variables from .env file
 from django.utils import timezone
 from django.db.models import Count
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 gmaps = googlemaps.Client(
@@ -72,19 +73,21 @@ class CreatePollView(APIView):
         try:
             response = requests.post(api_url, json=payload, headers=headers)
             if response.status_code in [HTTP_200_OK, HTTP_201_CREATED]:
-                publication_date = (
-                    timezone.now()
-                )  # Will set the publication_date to the user's current date/time in zulu time
                 poll_data = response.json().get("data", {})
-                question = Question.objects.create(
-                    question_text=poll_data.get("question"),  # Changed from "question"
+                if not poll_data:
+                    return Response({"error": "Poll creation failed, no data returned."}, status=HTTP_400_BAD_REQUEST)
+                
+                publication_date = (timezone.now())  # Will set the publication_date to the user's current date/time in zulu time
+                poll_data = response.json().get("data", {})
+                question_instance = Question.objects.create(
+                    question_text=poll_data.get("question"),
                     publication_date=publication_date,
                     latitude=latitude,
                     longitude=longitude,
                 )
                 for option in poll_data.get("options", []):
                     Choice.objects.create(
-                        question=question, choice_text=option.get("text")
+                        question=question_instance, choice_text=option.get("text")
                     )
                 return Response(poll_data, status=HTTP_201_CREATED)
             else:
