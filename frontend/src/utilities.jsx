@@ -6,28 +6,35 @@ export const api = axios.create({
 
 // --------------------------------------------------------- USERS ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-export const userRegistration = async(formData) => {
-  const { first_name, last_name, email, password } = formData; 
-  let response = await api.post('users/signup/', 
-    { 
+export const userRegistration = async (formData) => {
+  const { first_name, last_name, email, password } = formData;
+  try {
+    let response = await api.post('users/signup/', {
       first_name: first_name,
-      last_name: last_name, 
-      email: email, 
+      last_name: last_name,
+      email: email,
       password: password,
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      return user;
+    } else {
+      console.error('User registration failed with status:', response.status);
+      console.error('Response data:', response.data);
+      return null;
     }
-  );
-
-  if (response.status === 200){
-    const { token, user } = response.data; 
-    localStorage.setItem('token', token); 
-    api.defaults.headers.common['Authorization'] = `Token ${token}`
-    return user
-        
+  } catch (error) {
+    if (error.response) {
+      console.error('Error during user registration:', error.response.data);
+    } else {
+      console.error('Error during user registration:', error.message);
+    }
+    return null;
   }
-    console.log(response.data)
-    return null
 };
-
 
 export const logIn = async (formData) => {
   const { email, password } = formData; 
@@ -78,25 +85,33 @@ export const logOut = async(user) => {
 export const getInfo = async() => {
   let token = localStorage.getItem('token');
   if (!token) {
+    console.log('Token not found in localStorage')
     return null;
   }
 
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
 
   try {
-    const [userResponse, profileResponse] = await Promise.all([
-      api.get("users/info/"),
-      api.get("profile/info/"),
-    ]);
-
-    if (userResponse.status === 200 && profileResponse.status === 200) {
-      const combinedData = {
-        ...userResponse.data,
-        profile: profileResponse.data,
-      };
-      return combinedData;
-    }
-    return null;
+    const userResponse = await api.get('users/info/');
+    const userData = userResponse.data;
+      try {
+        const profileResponse = await api.get("profile/");
+        return {
+          ...userData, 
+          profile: profileResponse.data,
+        };
+      } catch (profileErr) {
+        console.error('Profile fetch error:', profileErr.response?.status, profileErr.message);
+        
+        if (profileErr.response?.status === 500) {
+          console.warn("Server error fetching profile. Address may not exist.");
+          return{
+            ...userData,
+            profile: null,
+          };
+        }
+        throw profileErr;
+      }
   } catch (err) {
     console.error('err fetching user info:', err.message);
     if (err.response && err.response.status === 401) {
@@ -106,34 +121,6 @@ export const getInfo = async() => {
   }
 };
 
-// export const updateUserProfile = async(formData) => {
-//   const { first_name, last_name, email, birth_date, bio, address, profile_picture } = formData;
-//   let formDataObj = new FormData();
-//   formDataObj.append('first_name', first_name);
-//   formDataObj.append('last_name', last_name);
-//   formDataObj.append('email', email);
-//   formDataObj.append('birth_date', birth_date);
-//   formDataObj.append('bio', bio);
-//   formDataObj.append('address', JSON.stringify(address));
-//   if (profile_picture) {
-//     formDataObj.append('profile_picture', profile_picture);
-//   }
-
-//   let response = await api.put('profile/update/', formDataObj, {
-//     headers: {
-//       'Content-Type': 'multipart/form-data'
-//     }
-//   });
-
-//   if (response.status === 200) {
-//     const user = response.data;
-//     localStorage.setItem('user', JSON.stringify(user));
-//     return user;
-//   }
-//   console.log(response.data);
-//   return null;
-// };
-
 
 // --------------------------------------------------------- POLLS ---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -142,7 +129,7 @@ export const createPoll = async(pollData) =>  {
 
     if (token) {
       api.defaults.headers.common['Authorization'] = `Token ${token}`;
-      const response = await api.post('polls/', pollData);
+      const response = await api.post('polls/create-poll/', pollData);
       
       if (response.status === 201) {
         const poll = response.data; 
@@ -157,18 +144,16 @@ export const createPoll = async(pollData) =>  {
 
 
 
-export const getAllPolls = async() => {
-  const token = localStorage.getItem('token')
-
-  if(token){
-      api.defaults.headers.common['Authorization'] = `Token ${token}`;
-      let response = await api.get('polls/');
-
-      if (response.status === 200){
-          return response.data;
-      }
-  } else {
-      return null;
+export const getAllPolls = async () => {
+  try {
+    const response = await api.get("polls/all/");
+    if (response.status === 200) {
+      return response.data;
+    }
+    return null;
+  } catch (err) {
+    console.error('err fetching polls:', err.message);
+    return null;
   }
 };
 
