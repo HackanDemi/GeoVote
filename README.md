@@ -4,17 +4,17 @@ GeoVote is an application that allows users to view popular polls in different a
 This is a fullstack web application for managing polls, built with Django REST Framwork and React. Users can browse polls, manage their polls, answer others polls, and more. 
 
 # Features 
-User Management 
+**User Management**
 - User authentication with email and password
 - User profiles with their own display name
 - Protected routes for authenticated users
 
-Poll Features 
+**Poll Features**
 - Browse polls with details (category, area)
 - View answers to polls after choosing, or view answers for polls that are closed
 - Dynamic map featuring heat spots for polls that are popular
 
-Poll Library 
+**Poll Library** 
 - Add a poll so others can answer
 - Remove a poll
 - View all active/deactivated polls
@@ -43,7 +43,7 @@ Open your command line and execute this :
    git clone https://github.com/HackanDemi/GeoVote.git
 ```
 
-Then navigate into the GeoVote folder
+Then navigate into the GeoVote directory
 ``` bash
    cd GeoVote
 ```
@@ -57,7 +57,7 @@ python -m venv (name of your env)
 source (name of your env)/bin/activate
 ```
 
-3. **Navigate into the backend folder:**
+3. **Navigate into the backend directory:**
 
 ```bash
 #TERMINAL   
@@ -78,7 +78,7 @@ pip install -r requirements.txt
 createdb geovote_db
 ```
 
-6. **Then migrate all t he models into the database with these two commands**
+6. **Then migrate all the models into the database with these two commands**
 
 ``` bash
 # TERMINAL
@@ -94,14 +94,30 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+8. **Finally, you can open the backend server. It should look like this:**
+    You'll be able to click the http://127.0.0.1:8000/ hyperlink, where you'll be able to look at the specific endpoints used for the project
+```bash
+# TERMINAL
+
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 15, 2025 - 15:26:12
+Django version 5.1.4, using settings 'GeoVote.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
+
 ## Frontend (React)
-1. **Navigate back to the GeoVote folder:**
+1. **Navigate back to the GeoVote directory:**
 ```bash 
 # TERMINAL  
 cd ..
 ```
+(this will take you back to the GeoVote directory)
 
-2. **Navigate to the frontend folder:**
+2. **Navigate to the frontend directory:**
 ```bash
 # TERMINAL  
 cd frontend
@@ -119,10 +135,10 @@ npm install
 npm run dev
 ```
 
-5. **Finally, open the frontend endpoint, the terminal should look like this: 
+5. **Finally, open the frontend endpoint, the terminal should look like this:** 
+    You'll be able to click on the http://localhost:5173 hyperlink which will open the project
 ```bash
 # TERMINAL 
-# You'll be able to click on the http://localhost:5173 hyperlink which will open the project
 
 > frontend@0.0.0 dev
 > vite
