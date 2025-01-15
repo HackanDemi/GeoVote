@@ -44,12 +44,12 @@ Frontend
 Open your command line and execute this : 
 
 ```bash
-   git clone https://github.com/HackanDemi/GeoVote.git
+git clone https://github.com/HackanDemi/GeoVote.git
 ```
 
 Then navigate into the GeoVote directory
 ``` bash
-   cd GeoVote
+cd GeoVote
 ```
 
 2. **Create and activate a virtual enviornment:**
