@@ -9,74 +9,54 @@
 
 
 .login-form { 
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    background: #0f1627f5;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(119, 0, 255, 0.5);
-    padding: 10%;
-    width: 10%;
-    max-width: 80%;
-    margin-top: 5%;
-    text-align: center;
-}
-
-
-.login-form h1 {
-    margin-bottom: 20px;
-    font-size: 50px;
-    color: white;
-}
-  
-
-.login-form form input {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    background: #363a47;
-    color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  background: #1c2333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(119, 0, 255, 0.9);
+  padding: 10%;
+  width: 10%;
+  max-width: 80%;
+  margin-top: 5%;
+  text-align: center;
 }
 
 
 .login-form button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background: #8e45d3;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #8e45d3;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
   }
 
-
 .login-form button:hover {
-    background: #611792;
+  background: #611792;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 .signup-form { 
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    background: #0f1627f5;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(119, 0, 255, 0.5);
-    padding: 10%;
-    width: 10%;
-    max-width: 80%;
-    margin-top: 5%;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  background: #1c2333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(119, 0, 255, 0.9);
+  padding: 10%;
+  width: 10%;
+  max-width: 80%;
+  margin-top: 5%;
+  text-align: center;
 }
 
 .signup-form .MuiInputBase-input {
@@ -89,22 +69,6 @@
 
 .signup-form .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
     border-color: #0f1627f5;
-}
-
-.signup-form h1 {
-    margin-bottom: 20px;
-    font-size: 50px;
-}
-  
-.signup-form form input {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    background: #363a47;
-    color: white;
 }
 
 .signup-form button {

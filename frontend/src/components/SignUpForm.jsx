@@ -1,12 +1,36 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { Container } from '@mui/material';
-import TextField from '@mui/material/TextField';
+import {Container, Box, Button, TextField, createTheme, ThemeProvider} from '@mui/material';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import { userRegistration } from '../utilities';
 import { useState } from 'react';
 
+
+const theme = createTheme({
+  palette: {
+    background: {
+      paper: '#1e1e2f',
+    },
+    text: {
+      primary: "#d3d3d3",
+      secondary: "#acacac",
+    },
+  }
+});
+
+const textStyles = {
+  color: "text.primary",
+  marginBottom: "8px",
+};
+
+const nameStyles = {
+  ...textStyles,
+  fontSize: "85px", 
+  fontWeight: "bold",
+  position: 'sticky', 
+  top: '0',
+  zIndex: '1',
+  padding: '10px 0',
+};
 
 
 const SignUpForm = () => {
@@ -41,18 +65,31 @@ const SignUpForm = () => {
 
   return (
     <>
-      <Container className='signup-form'>
-      <h1>Sign Up</h1>
+    <ThemeProvider theme={theme}>
+      <Container className='signup-form' sx={{
+          height: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+
+      <h1 style={nameStyles}>Sign Up</h1>
+      <br></br>
+
         <Box component='form'
         onSubmit={handleSubmit}
-          sx={{ width: '25ch' }}>
+          sx={{ width: '25ch', display: 'flex',
+            flexDirection: 'column', gap: 2 }}>
+
           <TextField 
             required
             id='first-name'
             label='First Name'
             type='name'
             value={firstName}
-            onChange={(evt) => setFirstName(evt.target.value)}/>
+            onChange={(evt) => setFirstName(evt.target.value)}
+            sx={{ width: '100%' }}/>
 
           <TextField 
             required
@@ -60,7 +97,8 @@ const SignUpForm = () => {
             label='Last Name'
             type='name'
             value={lastName}
-            onChange={(evt) => setLastName(evt.target.value)}/>
+            onChange={(evt) => setLastName(evt.target.value)}
+            sx={{ width: '100%' }}/>
 
           <TextField 
             required
@@ -68,7 +106,8 @@ const SignUpForm = () => {
             label='Email'
             type='email'
             value={email}
-            onChange={(evt) => setEmail(evt.target.value)}/>
+            onChange={(evt) => setEmail(evt.target.value)}
+            sx={{ width: '100%' }}/>
 
           <TextField 
             required
@@ -76,21 +115,23 @@ const SignUpForm = () => {
             label='Password'
             type='password'
             value={password}
-            onChange={(evt) => setPassword(evt.target.value)}/>
+            onChange={(evt) => setPassword(evt.target.value)}
+            sx={{ width: '100%' }}/>
           
-          <br></br>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Button type='submit'
             variant='outlined'>
               Sign Up
             </Button>
-         </Box>   
+        </Box>   
         </Box>
+
         <div className='signup-back-button'>
-          <Button component={Link} to='/login/'>Back to Log In</Button>
+          <Button component={Link} to='/login/'>←  Back to Log In</Button>
         </div>
-        
       </Container>
+    </ThemeProvider>
     </>
   )
 }

@@ -116,8 +116,6 @@ const ProfileCard = () => {
     const getUserData = async () => {
       const userInfo = await getInfo();
       const profileInfo = await getProfile();
-      console.log('User info:', userInfo); // Debugging line
-      console.log('Profile info:', profileInfo); // Debugging line
       if (userInfo && profileInfo) {
         setFormData({
           first_name: userInfo.first_name || '',
@@ -133,7 +131,7 @@ const ProfileCard = () => {
             zip_code: ''
           }
         });
-        setUser({ ...userInfo, id: profileInfo.profile.user }); // Ensure the user ID is included
+        setUser({ ...userInfo, id: profileInfo.profile.user }); 
       } else {
         console.error('Invalid user info structure:', userInfo, profileInfo);
       }
@@ -149,11 +147,11 @@ const ProfileCard = () => {
     }
 
     const updatedUser = {
-      user: user.id, // Ensure the user ID is included
+      user: user.id,
       birth_date: formData.birth_date,
       bio: formData.bio,
       address: {
-        id: formData.address.id, // Ensure the address ID is included
+        id: formData.address.id, 
         street: formData.address.street,
         city: formData.address.city,
         state: formData.address.state,
