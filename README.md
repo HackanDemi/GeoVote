@@ -95,7 +95,7 @@ python manage.py runserver
 ```
 
 8. **Finally, you can open the backend server. It should look like this:**
-    You'll be able to click the http://127.0.0.1:8000/ hyperlink, where you'll be able to look at the specific endpoints used for the project
+> You'll be able to click the http://127.0.0.1:8000/ hyperlink, where you'll be able to look at the specific endpoints used for the project
 ```bash
 # TERMINAL
 
@@ -115,7 +115,6 @@ Quit the server with CONTROL-C.
 # TERMINAL  
 cd ..
 ```
-(this will take you back to the GeoVote directory)
 
 2. **Navigate to the frontend directory:**
 ```bash
@@ -136,7 +135,7 @@ npm run dev
 ```
 
 5. **Finally, open the frontend endpoint, the terminal should look like this:** 
-    You'll be able to click on the http://localhost:5173 hyperlink which will open the project
+> You'll be able to click on the http://localhost:5173 hyperlink which will open the project
 ```bash
 # TERMINAL 
 
