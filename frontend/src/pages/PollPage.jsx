@@ -1,6 +1,5 @@
 import NavBar from '../components/NavBar'
-// import PollCard from '../components/PollsCard';
-import Poll from '../components/Poll';
+import PollsCard from '../components/PollsCard';
 import { getUserPolls } from '../utilities';
 import { useEffect, useState } from 'react';
 
@@ -22,7 +21,7 @@ export default function PollPage() {
     <>
     <NavBar />
     <div className="page-container">
-      <Poll/>
+      <PollsCard/>
     </div>
     </>
   )

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardActions, Button, TextField, Typography, Box } from '@mui/material';
+import { Card, CardContent, CardActions, Button, TextField, Typography, Box, createTheme, ThemeProvider } from '@mui/material';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
 import './PollCreateOrAnswerPage.css';
@@ -9,6 +9,41 @@ const PollCreateOrAnswer = () => {
   const [question, setQuestion] = useState('');
   const [choices, setChoices] = useState(['', '', '', '']);
   const [addressId, setAddressId] = useState('');
+
+
+
+
+  const theme = createTheme({
+    palette: {
+      background: {
+        paper: '#1e1e2f',
+      },
+      text: {
+        primary: "#d3d3d3",
+        secondary: "#acacac",
+      },
+      primary: {
+        main: '#7100AE',
+      },
+      secondary: {
+        main: '#a64eff',
+      },
+    }
+  });
+
+
+  const textStyles = {
+    fontSize: "32px", 
+    fontWeight: "bold",
+    marginTop: "8px",
+    marginBottom: "8px",
+  };
+
+  const titleStyles = {
+    fontSize: "50px",
+    fontWeight: "bold",
+  };
+
 
   const handleChoiceChange = (index, value) => {
     const newChoices = [...choices];
@@ -47,25 +82,19 @@ const PollCreateOrAnswer = () => {
   return (
     <>
       <NavBar />
+      <ThemeProvider theme={theme}>
+      
       <div className="poll-create-or-answer-container">
-        <Card className="poll-card">
+        <div className='your-polls' style={titleStyles}>Create a Poll</div> 
+        <Card className="poll-create-card"
+          sx={{
+            bgcolor: 'background.paper', 
+            borderRadius: "15px",
+            boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+            margin: "20px auto",
+            padding: "20px",
+          }}>
           <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#7100AE',
-                color: 'white',
-                padding: '10px 20px',
-                borderRadius: '4px',
-                marginBottom: '20px',
-              }}
-            >
-              <Typography variant="h5" component="div">
-                Create a Poll
-              </Typography>
-            </Box>
             <TextField
               label="Question"
               variant="outlined"
@@ -96,27 +125,31 @@ const PollCreateOrAnswer = () => {
           </CardContent>
           <CardActions>
             <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <Button variant="contained" color="secondary" onClick={handleCreatePoll}>
+              <Button variant="contained" color="secondary" onClick={handleCreatePoll} className="button-save">
                 Create Poll
               </Button>
             </Box>
           </CardActions>
         </Card>
+        <div className='your-polls' style={textStyles}>Or</div> 
         <div className="answer-polls-container">
-          <Typography variant="h5" component="div">
-            OR
-          </Typography>
           <Button
             variant="contained"
             color="secondary"
             component={Link}
             to="/poll"
-            sx={{ mt: 2 }} // Add margin-top to the button
-          >
+            sx={{
+              bgcolor: 'background.paper', 
+              borderRadius: "15px",
+              boxShadow: "0 4px 20px rgba(128, 90, 213, 0.8)", 
+              margin: "20px auto",
+              padding: "20px",
+            }}className="button-save">
             Answer Polls
           </Button>
         </div>
       </div>
+    </ThemeProvider>
     </>
   );
 };

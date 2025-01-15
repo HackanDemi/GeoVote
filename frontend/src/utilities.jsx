@@ -128,7 +128,20 @@ export const updateProfile = async (profileData) => {
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
 
   try {
-    const response = await api.put('profile/', profileData);
+    const response = await api.put(`profile/${profileData.user}/`, {
+      profile: {
+        birth_date: profileData.birth_date,
+        bio: profileData.bio,
+        user: profileData.user, // Ensure the user field is included
+      },
+      address: {
+        id: profileData.address.id, // Ensure the address id is included
+        street: profileData.address.street,
+        city: profileData.address.city,
+        state: profileData.address.state,
+        zip_code: profileData.address.zip_code,
+      },
+    });
     if (response.status === 200) {
       return response.data;
     } else {

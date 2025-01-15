@@ -116,21 +116,24 @@ const ProfileCard = () => {
     const getUserData = async () => {
       const userInfo = await getInfo();
       const profileInfo = await getProfile();
+      console.log('User info:', userInfo); // Debugging line
+      console.log('Profile info:', profileInfo); // Debugging line
       if (userInfo && profileInfo) {
         setFormData({
           first_name: userInfo.first_name || '',
           last_name: userInfo.last_name || '',
           email: userInfo.email || '',
-          birth_date: profileInfo.birth_date || '',
-          bio: profileInfo.bio || '',
+          birth_date: profileInfo.profile.birth_date || '',
+          bio: profileInfo.profile.bio || '',
           address: profileInfo.address || {
+            id: '',
             street: '',
             city: '',
             state: '',
             zip_code: ''
           }
         });
-        setUser(userInfo);
+        setUser({ ...userInfo, id: profileInfo.profile.user }); // Ensure the user ID is included
       } else {
         console.error('Invalid user info structure:', userInfo, profileInfo);
       }
@@ -140,17 +143,22 @@ const ProfileCard = () => {
 
 
   const handleSave = async () => {
+    if (!user || !user.id) {
+      console.error('User ID is not set');
+      return;
+    }
+
     const updatedUser = {
-      user: {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        email: formData.email,
+      user: user.id, // Ensure the user ID is included
+      birth_date: formData.birth_date,
+      bio: formData.bio,
+      address: {
+        id: formData.address.id, // Ensure the address ID is included
+        street: formData.address.street,
+        city: formData.address.city,
+        state: formData.address.state,
+        zip_code: formData.address.zip_code,
       },
-      profile: {
-        birth_date: formData.birth_date,
-        bio: formData.bio,
-      },
-      address: formData.address,
     };
 
     console.log('Saving to localStorage:', updatedUser);
@@ -158,12 +166,12 @@ const ProfileCard = () => {
     const response = await updateProfile(updatedUser);
     if (response) {
       console.log('Profile updated successfully:', response);
-      localStorage.setItem('user', JSON.stringify({ ...user, ...updatedUser.user }));
-      setUser({ ...user, ...updatedUser.user });
+      localStorage.setItem('user', JSON.stringify({ ...user, ...updatedUser }));
+      setUser({ ...user, ...updatedUser });
       setFormData({
-        first_name: response.user.first_name,
-        last_name: response.user.last_name,
-        email: response.user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
         birth_date: response.profile.birth_date,
         bio: response.profile.bio,
         address: response.address

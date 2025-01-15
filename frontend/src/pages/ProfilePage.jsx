@@ -11,6 +11,15 @@ const textStyles = {
   fontWeight: "bold",
 };
 
+const secondaryStyles = {
+  fontSize: '24px',
+  marginTop: '115px',
+  textAlign: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+}
+
 
 const ProfilePage = () => {
   const [polls, setPolls] = useState([]);
@@ -51,7 +60,7 @@ const ProfilePage = () => {
             />
           ))
         ) : (
-          <div>You haven't created any polls yet!</div>
+          <div style={secondaryStyles}>You haven't created any polls yet!</div>
         )}
       </div>
     </>

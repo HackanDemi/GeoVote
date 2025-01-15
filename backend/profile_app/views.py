@@ -115,9 +115,9 @@ class ProfileView(APIView):
         print(f"Authenticated user: {request.user}")  # Debug statement
         try:
             profile = Profile.objects.get(pk=pk, user=request.user)
-            address = Address.objects.filter(pk=profile.address.pk, user=request.user).first()
-            if not address:
-                address = None
+            address = Address.objects.filter(pk=profile.address.pk, user=request.user).first() if profile.address else None
+            # if not address:
+            #     address = None
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=HTTP_404_NOT_FOUND)
     
@@ -129,7 +129,7 @@ class ProfileView(APIView):
     
         if profile_serializer.is_valid() and (address_serializer is None or address_serializer.is_valid()):
             if address_serializer:
-                address_instance = address_serializer.save()
+                address_instance = address_serializer.save(user=request.user)
                 profile_instance = profile_serializer.save(address=address_instance)
                 
                 full_address = f"{address_instance.street}, {address_instance.city}, {address_instance.state} {address_instance.zip_code}"
