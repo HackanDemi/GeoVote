@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardActions, Button, TextField, Typography, Box, createTheme, ThemeProvider } from '@mui/material';
+import { Card, CardContent, CardActions, Button, TextField, Box, createTheme, ThemeProvider } from '@mui/material';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
 import './PollCreateOrAnswerPage.css';
@@ -71,6 +71,10 @@ const PollCreateOrAnswer = () => {
       if (response.status === 200) {
         console.log('Poll created successfully:', response.data);
         // Optionally, redirect or show a success message
+        // Reset input fields after poll creation
+        setQuestion('');
+        setChoices(['', '', '', '']);
+        setAddressId('');
       } else {
         console.error('Failed to create poll:');
       }
