@@ -33,3 +33,30 @@ Frontend
 - Material-UI
 
 # Installation
+
+## Backend (Django)
+
+1. **Clone the repository:**
+Open your command line and execute this : 
+
+```bash
+   git clone https://github.com/HackanDemi/GeoVote.git
+```
+
+Then move into the folder
+``` bash
+   cd GeoVote
+```
+
+2. **Create and activate a virtual enviornment:**
+
+``` bash
+python -m venv (name of your env)
+source (name of your env)/bin/activate
+```
+
+3. **Install the backend dependencies: 
+
+``` bash
+pip install -r requirements.txt
+```
