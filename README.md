@@ -6,18 +6,21 @@ This is a fullstack web application for managing polls, built with Django REST F
 # Features 
 **User Management**
 - User authentication with email and password
-- User profiles with their own display name
 - Protected routes for authenticated users
 
 **Poll Features**
-- Browse polls with details (category, area)
-- View answers to polls after choosing, or view answers for polls that are closed
+- Browse random polls with details
+- View answers to polls after choosing on the map
 - Dynamic map featuring heat spots for polls that are popular
 
 **Poll Library** 
-- Add a poll so others can answer
-- Remove a poll
-- View all active/deactivated polls
+- Add your own poll that other users will be able to answer
+- Edit or remove a poll
+- View the users active/deactivated polls
+
+**Map Functionality**
+- Pin point a users answers using the users address, and displaying them on a heat map overlay
+- View popular heat points all around the U.S.
 
 # Technology Used
 Backend
@@ -31,6 +34,7 @@ Frontend
 - React Router DOM
 - Tailwind CSS
 - Material-UI
+
 
 # Installation
 
