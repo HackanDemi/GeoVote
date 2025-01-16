@@ -68,7 +68,7 @@ const PollCreateOrAnswer = () => {
 
       // console.log(response.data)
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         console.log('Poll created successfully:', response.data);
         // Optionally, redirect or show a success message
         // Reset input fields after poll creation
