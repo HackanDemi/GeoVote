@@ -97,6 +97,7 @@
     height: 100%;
   }
   
+ 
   
 .profile-card .MuiTypography-root {
   color: #000000; 
@@ -244,19 +245,3 @@ body, html {
 .or {
   color: white
 }
-
-/* .answer-polls-container { 
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    background: #0f1627f5;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(119, 0, 255, 0.5);
-    padding: 10%;
-    width: 10%;
-    max-width: 80%;
-    margin-top: 5%;
-    text-align: center;
-} */

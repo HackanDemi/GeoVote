@@ -11,4 +11,3 @@ export default function HomePage() {
   )
 }
 
-// Have the home page render the MapTiler component? 

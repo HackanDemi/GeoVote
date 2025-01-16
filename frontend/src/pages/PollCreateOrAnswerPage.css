@@ -5,7 +5,7 @@
   justify-content: center;
   height: 100vh;
   padding: 20px;
-  background-color: transparent; /* Ensure the container is transparent */
+  background-color: transparent; 
 }
 
 .answer-polls-container {
@@ -14,8 +14,8 @@
 }
 
 .poll-card {
-  background-color: transparent !important; /* Ensure the card is transparent */
-  box-shadow: none; /* Remove any box shadow if present */
+  background-color: transparent !important; 
+  box-shadow: none;
 }
 
 .MuiOutlinedInput-root {

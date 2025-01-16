@@ -19,6 +19,7 @@ import './Poll.css';
   const textStyles = {
     color: "text.primary",
     marginBottom: "8px",
+    textAlign: "center",
   };
 
   const nameStyles = {

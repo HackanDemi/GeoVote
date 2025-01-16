@@ -3,6 +3,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import { userRegistration } from '../utilities';
 import { useState } from 'react';
+import Geovote from '../assets/GeoVote.png';
 
 
 const theme = createTheme({
@@ -24,12 +25,13 @@ const textStyles = {
 
 const nameStyles = {
   ...textStyles,
-  fontSize: "85px", 
+  fontSize: "75px", 
   fontWeight: "bold",
-  position: 'sticky', 
-  top: '0',
-  zIndex: '1',
-  padding: '10px 0',
+};
+
+const titleStyles = {
+  ...textStyles,
+  fontSize: "45px", 
 };
 
 
@@ -56,7 +58,7 @@ const SignUpForm = () => {
     console.log(user);
   if (user) {
     setUser(user);
-    navigate('/home', {state: {user: user}});
+    navigate('/profile', {state: {user: user}});
   } else {
     console.error('User registration failed.');
   }
@@ -73,8 +75,11 @@ const SignUpForm = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-
-      <h1 style={nameStyles}>Sign Up</h1>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={Geovote} alt="GeoVote" style={{ maxWidth: '75%' }} />
+          </Box>
+      <h1 style={nameStyles}>GeoVote</h1>
+      <h1 style={titleStyles}>Sign Up</h1>
       <br></br>
 
         <Box component='form'

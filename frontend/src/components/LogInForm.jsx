@@ -3,6 +3,7 @@ import { logIn } from '../utilities';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom';
+import GeoVote from '../assets/GeoVote.png';
 
 
 const theme = createTheme({
@@ -17,20 +18,21 @@ const theme = createTheme({
   }
 });
 
-  const textStyles = {
-    color: "text.primary",
-    marginBottom: "8px",
-  };
+const textStyles = {
+  color: "text.primary",
+  marginBottom: "8px",
+};
 
-  const nameStyles = {
-    ...textStyles,
-    fontSize: "85px", 
-    fontWeight: "bold",
-    position: 'sticky', 
-    top: '0',
-    zIndex: '1',
-    padding: '10px 0',
-  };
+const nameStyles = {
+  ...textStyles,
+  fontSize: "75px", 
+  fontWeight: "bold",
+};
+
+const titleStyles = {
+  ...textStyles,
+  fontSize: "45px", 
+};
 
 
 const LogInForm = () => {
@@ -50,7 +52,7 @@ const LogInForm = () => {
     if (user) {
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/home', {state: {user: user}})
+      navigate('/profile', {state: {user: user}})
     };
   };
 
@@ -66,7 +68,11 @@ const LogInForm = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <h1 style={nameStyles}>Log In</h1>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={GeoVote} alt="GeoVote" style={{ maxWidth: '75%' }} />
+          </Box>
+        <h1 style={nameStyles}>GeoVote</h1>
+        <h1 style={titleStyles}>Log In</h1>
         <br></br>
 
         <Box component='form'
