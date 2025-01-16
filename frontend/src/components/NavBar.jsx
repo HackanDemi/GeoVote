@@ -9,7 +9,7 @@ import { logOut } from '../utilities';
 
 
 const pages = [
-  { name: 'Home', path: '/home' },
+  { name: 'News', path: '/news' },
   { name: 'Map', path: '/map' },
   { name: 'Poll', path: '/pollcreateoranswer' },
 ];

@@ -58,7 +58,7 @@ const SignUpForm = () => {
     console.log(user);
   if (user) {
     setUser(user);
-    navigate('/profile', {state: {user: user}});
+    navigate('/news', {state: {user: user}});
   } else {
     console.error('User registration failed.');
   }
@@ -68,22 +68,25 @@ const SignUpForm = () => {
   return (
     <>
     <ThemeProvider theme={theme}>
-      <Container className='signup-form' sx={{
-          height: '80vh',
+      <Container className='signup-form' 
+        sx={{
+          height: '90vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          padding: '20px',
+          boxSizing: 'border-box',
         }}>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <img src={Geovote} alt="GeoVote" style={{ maxWidth: '75%' }} />
-          </Box>
-      <h1 style={nameStyles}>GeoVote</h1>
-      <h1 style={titleStyles}>Sign Up</h1>
-      <br></br>
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2  }}>
+          <img src={Geovote} alt="GeoVote" style={{ maxWidth: '75%' }} />
+        </Box>
+        <h1 style={nameStyles}>GeoVote</h1>
+        <h1 style={titleStyles}>Sign Up</h1>
+        <br></br>
 
         <Box component='form'
-        onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
           sx={{ width: '25ch', display: 'flex',
             flexDirection: 'column', gap: 2 }}>
 

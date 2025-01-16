@@ -52,7 +52,7 @@ const LogInForm = () => {
     if (user) {
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/profile', {state: {user: user}})
+      navigate('/news', {state: {user: user}})
     };
   };
 
@@ -62,11 +62,13 @@ const LogInForm = () => {
     <ThemeProvider theme={theme}>
       <Container className='login-form' 
         sx={{
-          height: '80vh',
+          height: '90vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          padding: '20px',
+          boxSizing: 'border-box',
         }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <img src={GeoVote} alt="GeoVote" style={{ maxWidth: '75%' }} />

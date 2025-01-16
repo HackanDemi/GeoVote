@@ -14,7 +14,6 @@ const router = createBrowserRouter([
     {
         path: "/", 
         element: <App/>,
-        // loader: getInfo,                //add this later when backend is connected to front end
         children:[
             {
                 index:true, 
@@ -33,7 +32,7 @@ const router = createBrowserRouter([
                 element:<HomePage/>
             },
             {
-                path: 'home/',
+                path: 'news/',
                 element: <HomePage/>
             },
             {
