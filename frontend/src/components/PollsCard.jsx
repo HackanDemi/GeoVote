@@ -63,27 +63,18 @@ const PollsCard = ({ edit, readOnly, onDelete }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (buttonText === 'Vote') {
-      // Handle vote submission logic here
-      console.log('User voted for:', selectedOption ? selectedOption.text : 'No option selected');
-      setTotalVotes(totalVotes + 1);
-      setButtonText('Next question');
+      if (selectedOption) {
+        console.log('User voted for:', selectedOption.text);
+        setButtonText('Next question');
+      } else {
+        alert('Please select an option before voting.');
+      }
     } else {
-      setPollId(pollId + 1); // Increment the poll ID to fetch the next question
+      setPollId(pollId + 1); // Move to the next poll
+      setSelectedOption(null); // Reset the selection for the next question
+      setButtonText('Vote');  // Reset the button text
     }
   };
-
-  const PollOptions = ({ option, onClick, isSelected }) => {
-    return (
-      <Button
-        className={`poll-option w-full p-2 mt-2 text-white rounded ${isSelected ? 'bg-[#7100AE]' : 'bg-gray-700'} hover:bg-[#7100AE]`}
-        onClick={onClick}
-        style={{ color: 'white' }} // Inline style to set text color to white
-      >
-        {option.text}
-      </Button>
-    );
-  };
-
 
   return ( 
     <>
@@ -105,10 +96,14 @@ const PollsCard = ({ edit, readOnly, onDelete }) => {
               <div style={textStyles}>
                 {options.map((option, index) => (
                   <button
-                  key={index}
-                  className={`poll-option w-full p-2 mt-2 text-white rounded ${selectedOption === option ? 'bg-[#7100AE]' : 'bg-gray-700'} hover:bg-[#7100AE]`}
-                  onClick={() => handleOptionClick(option)}
-                  style={{ color: 'white' }}>
+                    key={index}
+                    className={`poll-option w-full p-2 mt-2 text-white rounded ${selectedOption === option ? 'bg-[#7100AE]' : 'bg-gray-700'} hover:bg-[#7100AE]`} 
+                    onClick={() => handleOptionClick(option)}
+                    style={{ 
+                      color: 'white',
+                      border: selectedOption === option ? '2px solid #7100AE' : '1px solid transparent',
+                    }}
+                  >
                     {option.text}
                   </button>
                 ))}
